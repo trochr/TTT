@@ -1,5 +1,6 @@
 const boardElement = document.getElementById('board');
 const statusElement = document.getElementById('status');
+const connectionStatusElement = document.getElementById('connection-status');
 const restartButton = document.getElementById('restart');
 const hostButton = document.getElementById('hostButton');
 const joinButton = document.getElementById('joinButton');
@@ -11,7 +12,8 @@ const joinGameButton = document.getElementById('joinGameButton');
 const qrcodeElement = document.getElementById('qrcode');
 const gameTypeSelect = document.getElementById('gameType');
 
-const WS_URL = `wss://d2s0bpt4nca4om.cloudfront.net`;
+// const WS_URL = `wss://d2s0bpt4nca4om.cloudfront.net`;
+const WS_URL = window.WEBSOCKET_URL;
 let reconnectInterval = 1000; // Initial reconnect interval in milliseconds
 let ws;
 let game = null;
@@ -24,6 +26,8 @@ function initializeWebSocket(socket) {
         console.log('WebSocket connection opened');
         console.log('WebSocket readyState:', socket.readyState);
         reconnectInterval = 1000; // Reset reconnect interval on successful connection
+        connectionStatusElement.textContent = 'Connection established';
+        connectionStatusElement.style.color = 'green';
 
         // Send the stored playerId to the server, or an empty object if not available
         try {
@@ -107,13 +111,16 @@ function initializeWebSocket(socket) {
         const timestamp = new Date().toISOString();
         console.log(`[${timestamp}] WebSocket closed:`, event);
         console.log('Code:', event.code, 'Reason:', event.reason, 'WasClean:', event.wasClean);
-        statusElement.textContent = 'Connection lost. Reconnecting...';
+        connectionStatusElement.textContent = 'Connection lost. Reconnecting...';
+        connectionStatusElement.style.color = 'red';
         attemptReconnect();
         console.trace('WebSocket onclose stack trace');
     };
 
     socket.onerror = (error) => {
         console.error('WebSocket error:', error);
+        connectionStatusElement.textContent = 'Connection error';
+        connectionStatusElement.style.color = 'red';
         console.trace('WebSocket onerror stack trace');
     };
 }

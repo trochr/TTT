@@ -73,7 +73,8 @@ class Ttt {
         this.sendMessage = sendMessageCallback;
 
         this.board = this.createBoard();
-        this.piece = null;
+        this.clientPiece = null; // The piece rendered on screen, predicted by the client
+        this.serverPiece = null; // The authoritative piece from the server
         this.gameId = null;
         this.player = null;
         this.isDropping = false;
@@ -100,7 +101,26 @@ class Ttt {
         this.softDropInterval = null;
         this.moveDirection = 0; // -1 for left, 1 for right
 
+        // Interpolation properties
+        this.interpolationFactor = 0.3; // 30% interpolation per frame
+
         this._initializeBoard();
+        this.gameLoop(); // Start the game loop
+    }
+
+    gameLoop() {
+        if (this.clientPiece && this.serverPiece) {
+            // Interpolate position
+            this.clientPiece.x += (this.serverPiece.x - this.clientPiece.x) * this.interpolationFactor;
+            this.clientPiece.y += (this.serverPiece.y - this.clientPiece.y) * this.interpolationFactor;
+
+            // Snap rotation and shape
+            this.clientPiece.rotation = this.serverPiece.rotation;
+            this.clientPiece.shape = this.serverPiece.shape;
+        }
+
+        this.draw();
+        requestAnimationFrame(this.gameLoop.bind(this));
     }
 
     createBoard() {
@@ -242,25 +262,24 @@ class Ttt {
     }
 
     movePiece(dx, dy) {
-        if (!this.piece) return;
-        let newPiece = JSON.parse(JSON.stringify(this.piece));
+        if (!this.clientPiece) return;
+        let newPiece = JSON.parse(JSON.stringify(this.clientPiece));
         if (this.is_valid_move(this.board, newPiece, newPiece.x + dx, newPiece.y + dy)) {
             newPiece.x += dx;
             newPiece.y += dy;
-            this.piece = newPiece;
-            this.draw();
+            this.clientPiece = newPiece;
             this.sendMessage({ type: 'move', game_id: this.gameId, action: 'move', dx: dx, dy: dy });
         }
     }
 
     rotatePiece(clockwise) {
-        if (!this.piece) return;
+        if (!this.clientPiece) return;
 
-        const originalPiece = JSON.parse(JSON.stringify(this.piece));
+        const originalPiece = JSON.parse(JSON.stringify(this.clientPiece));
         let rotatedPiece = this.rotate_piece(originalPiece, clockwise);
         let moveSuccessful = false;
 
-        const kickTable = (this.piece.name === 'I') ? I_KICKS : JLSTZ_KICKS;
+        const kickTable = (this.clientPiece.name === 'I') ? I_KICKS : JLSTZ_KICKS;
         const fromRotation = originalPiece.rotation;
         const toRotation = rotatedPiece.rotation;
         const kickKey = `${fromRotation}->${toRotation}`;
@@ -272,29 +291,27 @@ class Ttt {
             if (this.is_valid_move(this.board, rotatedPiece, originalPiece.x + dx, originalPiece.y - dy)) {
                 rotatedPiece.x = originalPiece.x + dx;
                 rotatedPiece.y = originalPiece.y - dy;
-                this.piece = rotatedPiece;
+                this.clientPiece = rotatedPiece;
                 moveSuccessful = true;
                 break;
             }
         }
 
         if (moveSuccessful) {
-            this.draw();
             this.sendMessage({ type: 'move', game_id: this.gameId, action: clockwise ? 'rotate_right' : 'rotate_left' });
         }
     }
 
     hardDrop() {
-        if (!this.piece) return;
+        if (!this.clientPiece) return;
         this.inputDisabled = true;
         this.stopDas();
-        let newPiece = JSON.parse(JSON.stringify(this.piece));
+        let newPiece = JSON.parse(JSON.stringify(this.clientPiece));
         while (this.is_valid_move(this.board, newPiece, newPiece.x, newPiece.y + 1)) {
             newPiece.y += 1;
         }
-        this.piece = newPiece;
+        this.clientPiece = newPiece;
         this.sendMessage({ type: 'move', game_id: this.gameId, action: 'hard_drop' });
-        this.draw();
     }
 
     startDas(direction) {
@@ -316,10 +333,13 @@ class Ttt {
     }
 
     calculateGhostPiece() {
-        if (!this.piece) {
+        if (!this.clientPiece) {
             return null;
         }
-        let ghost = JSON.parse(JSON.stringify(this.piece));
+        let ghost = JSON.parse(JSON.stringify(this.clientPiece));
+        // Use integer coordinates for ghost piece calculation to avoid floating point issues
+        ghost.x = Math.round(ghost.x);
+        ghost.y = Math.round(ghost.y);
         while (this.is_valid_move(this.board, ghost, ghost.x, ghost.y + 1)) {
             ghost.y++;
         }
@@ -349,7 +369,9 @@ class Ttt {
                         const x = ghostPiece.x + c;
                         if (y >= 0 && y < 20 && x >= 0 && x < 10) {
                             const cellElement = this.boardElement.children[y * 10 + x];
-                            cellElement.classList.add('ghost', 'filled', `filled-${pieceName}`);
+                            if (cellElement) { // Add safety check
+                                cellElement.classList.add('ghost', 'filled', `filled-${pieceName}`);
+                            }
                         }
                     }
                 });
@@ -357,17 +379,20 @@ class Ttt {
         }
 
         // 3. Draw the active piece
-        if (this.piece) {
-            const pieceName = this.piece.name;
-            this.piece.shape.forEach((row, r) => {
+        if (this.clientPiece) {
+            const pieceName = this.clientPiece.name;
+            this.clientPiece.shape.forEach((row, r) => {
                 row.forEach((cell, c) => {
                     if (cell) {
-                        const y = this.piece.y + r;
-                        const x = this.piece.x + c;
+                        // Round the coordinates before rendering to get a valid grid cell
+                        const y = Math.round(this.clientPiece.y) + r;
+                        const x = Math.round(this.clientPiece.x) + c;
                         if (y >= 0 && y < 20 && x >= 0 && x < 10) {
                             const cellElement = this.boardElement.children[y * 10 + x];
-                            cellElement.classList.remove('ghost'); // Ensure active piece is not transparent
-                            cellElement.classList.add('filled', `filled-${pieceName}`);
+                            if (cellElement) { // Add safety check
+                                cellElement.classList.remove('ghost'); // Ensure active piece is not transparent
+                                cellElement.classList.add('filled', `filled-${pieceName}`);
+                            }
                         }
                     }
                 });
@@ -428,7 +453,10 @@ class Ttt {
                 this.gameId = data.game_id;
                 this.player = data.player;
                 this.board = data.board;
-                this.piece = data.piece;
+                this.serverPiece = data.piece;
+                if (this.serverPiece) {
+                    this.clientPiece = JSON.parse(JSON.stringify(this.serverPiece));
+                }
                 this.statusElement.textContent = '';
                 this.gameOver = false;
                 this.toppedOut = false;
@@ -441,7 +469,6 @@ class Ttt {
                 this.linesPlayer2Element.textContent = 'Lines: 0';
                 this.levelPlayer1Element.textContent = 'Level: 0';
                 this.levelPlayer2Element.textContent = 'Level: 0';
-                this.draw();
                 // Initial draw of next piece
                 if (data.next_piece) {
                     this.drawNextPiece(data.next_piece);
@@ -460,7 +487,20 @@ class Ttt {
 
                 if (playerData) {
                     this.board = playerData.board;
-                    this.piece = playerData.piece;
+                    this.serverPiece = playerData.piece;
+
+                    // If the server sends a piece near the top, it's a new piece.
+                    // In this case, we should "snap" the client piece to the server piece's position
+                    // instead of trying to interpolate from the old position.
+                    if (this.serverPiece && this.serverPiece.y < 2) {
+                        this.clientPiece = JSON.parse(JSON.stringify(this.serverPiece));
+                    } else if (!this.clientPiece && this.serverPiece) {
+                        // Also snap if the client piece doesn't exist yet.
+                        this.clientPiece = JSON.parse(JSON.stringify(this.serverPiece));
+                    } else if (!this.serverPiece) {
+                        // If the server says there is no piece, the client should agree.
+                        this.clientPiece = null;
+                    }
 
                     // These properties are only available in full updates (when data.player1 exists)
                     if (data.player1) {
@@ -501,7 +541,6 @@ class Ttt {
                         this.prevPlayer1Finished = data.player1.finished;
                         this.prevPlayer2Finished = data.player2.finished;
                     }
-                    this.draw();
                 }
                 break;
             case 'game_over':
