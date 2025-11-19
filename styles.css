@@ -1,5 +1,828 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
 
+:root {
+    /* Raw color definitions for each theme's dark and light variants */
+
+    /* Default (Dark and Light variations) */
+    --bg-color-default-dark: #1a1a1a;
+    --text-color-default-dark: #f0f0f0;
+    --panel-bg-default-dark: #2c2c2c;
+    --border-color-default-dark: #444;
+    --input-bg-default-dark: #333;
+    --input-text-default-dark: #f0f0f0;
+    --button-primary-default-dark: #008CBA;
+    --button-primary-hover-default-dark: #007B9A;
+    --button-restart-default-dark: #4CAF50;
+    --button-restart-hover-default-dark: #45a049;
+    --button-copy-default-dark: #f44336;
+    --button-copy-hover-default-dark: #d32f2f;
+    --cell-bg-default-dark: #2c2c2c;
+    --cell-hover-default-dark: #3c3c3c;
+    --board-bg-ttt-default-dark: rgb(25, 25, 25);
+    --cell-bg-ttt-default-dark: rgb(36, 36, 36);
+    --preview-cell-bg-ttt-default-dark: #3c3c3c;
+
+    --bg-color-default-light: #f0f0f0;
+    --text-color-default-light: #1a1a1a;
+    --panel-bg-default-light: #ffffff;
+    --border-color-default-light: #ccc;
+    --input-bg-default-light: #e0e0e0;
+    --input-text-default-light: #1a1a1a;
+    --button-primary-default-light: #007B9A;
+    --button-primary-hover-default-light: #005F7F;
+    --button-restart-default-light: #4CAF50;
+    --button-restart-hover-default-light: #45a049;
+    --button-copy-default-light: #d32f2f;
+    --button-copy-hover-default-light: #b71c1c;
+    --cell-bg-default-light: #e0e0e0;
+    --cell-hover-default-light: #d0d0d0;
+    --board-bg-ttt-default-light: rgb(220, 220, 220);
+    --cell-bg-ttt-default-light: rgb(200, 200, 200);
+    --preview-cell-bg-ttt-default-light: #d0d0d0;
+
+    /* Monochrome Classic (Dark and Light variations) */
+    --bg-color-monochrome-classic-dark: #111111;
+    --text-color-monochrome-classic-dark: #eeeeee;
+    --panel-bg-monochrome-classic-dark: #222222;
+    --border-color-monochrome-classic-dark: #444444;
+    --input-bg-monochrome-classic-dark: #333333;
+    --input-text-monochrome-classic-dark: #eeeeee;
+    --button-primary-monochrome-classic-dark: #555555;
+    --button-primary-hover-monochrome-classic-dark: #777777;
+    --button-restart-monochrome-classic-dark: #666666;
+    --button-restart-hover-monochrome-classic-dark: #888888;
+    --button-copy-monochrome-classic-dark: #444444;
+    --button-copy-hover-monochrome-classic-dark: #666666;
+    --cell-bg-monochrome-classic-dark: #222222;
+    --cell-hover-monochrome-classic-dark: #333333;
+    --board-bg-ttt-monochrome-classic-dark: #000000;
+    --cell-bg-ttt-monochrome-classic-dark: #111111;
+    --preview-cell-bg-ttt-monochrome-classic-dark: #222222;
+
+    --bg-color-monochrome-classic-light: white;
+    --text-color-monochrome-classic-light: black;
+    --panel-bg-monochrome-classic-light: lightgray;
+    --border-color-monochrome-classic-light: black;
+    --input-bg-monochrome-classic-light: white;
+    --input-text-monochrome-classic-light: black;
+    --button-primary-monochrome-classic-light: black;
+    --button-primary-hover-monochrome-classic-light: darkgray;
+    --button-restart-monochrome-classic-light: darkgray;
+    --button-restart-hover-monochrome-classic-light: gray;
+    --button-copy-monochrome-classic-light: black;
+    --button-copy-hover-monochrome-classic-light: darkgray;
+    --cell-bg-monochrome-classic-light: white;
+    --cell-hover-monochrome-classic-light: lightgray;
+    --board-bg-ttt-monochrome-classic-light: black;
+    --cell-bg-ttt-monochrome-classic-light: white;
+    --preview-cell-bg-ttt-monochrome-classic-light: lightgray;
+
+    /* Urban Grey (Dark and Light variations) */
+    --bg-color-urban-grey-dark: #2b2b2b;
+    --text-color-urban-grey-dark: #cccccc;
+    --panel-bg-urban-grey-dark: #3a3a3a;
+    --border-color-urban-grey-dark: #5c5c5c;
+    --input-bg-urban-grey-dark: #4e4e4e;
+    --input-text-urban-grey-dark: #cccccc;
+    --button-primary-urban-grey-dark: #7a7a7a;
+    --button-primary-hover-urban-grey-dark: #919191;
+    --button-restart-urban-grey-dark: #8c8c8c;
+    --button-restart-hover-urban-grey-dark: #a3a3a3;
+    --button-copy-urban-grey-dark: #6e6e6e;
+    --button-copy-hover-urban-grey-dark: #828282;
+    --cell-bg-urban-grey-dark: #3a3a3a;
+    --cell-hover-urban-grey-dark: #4e4e4e;
+    --board-bg-ttt-urban-grey-dark: #1a1a1a;
+    --cell-bg-ttt-urban-grey-dark: #2a2a2a;
+    --preview-cell-bg-ttt-urban-grey-dark: #3a3a3a;
+
+    --bg-color-urban-grey-light: #f0f0f0;
+    --text-color-urban-grey-light: #333333;
+    --panel-bg-urban-grey-light: #e0e0e0;
+    --border-color-urban-grey-light: #999999;
+    --input-bg-urban-grey-light: #cccccc;
+    --input-text-urban-grey-light: #333333;
+    --button-primary-urban-grey-light: #666666;
+    --button-primary-hover-urban-grey-light: #555555;
+    --button-restart-urban-grey-light: #888888;
+    --button-restart-hover-urban-grey-light: #777777;
+    --button-copy-urban-grey-light: #444444;
+    --button-copy-hover-urban-grey-light: #333333;
+    --cell-bg-urban-grey-light: #e0e0e0;
+    --cell-hover-urban-grey-light: #d0d0d0;
+    --board-bg-ttt-urban-grey-light: #444444;
+    --cell-bg-ttt-urban-grey-light: #cccccc;
+    --preview-cell-bg-ttt-urban-grey-light: #bbbbbb;
+
+    /* Deep Ocean (Dark and Light variations) */
+    --bg-color-deep-ocean-dark: #0A192F;
+    --text-color-deep-ocean-dark: #E6F1FF;
+    --panel-bg-deep-ocean-dark: #122A4E;
+    --border-color-deep-ocean-dark: #3B6B9B;
+    --input-bg-deep-ocean-dark: #0F223F;
+    --input-text-deep-ocean-dark: #E6F1FF;
+    --button-primary-deep-ocean-dark: #64FFDA;
+    --button-primary-hover-deep-ocean-dark: #4FD8BC;
+    --button-restart-deep-ocean-dark: #28A745;
+    --button-restart-hover-deep-ocean-dark: #218838;
+    --button-copy-deep-ocean-dark: #DC3545;
+    --button-copy-hover-deep-ocean-dark: #C82333;
+    --cell-bg-deep-ocean-dark: #122A4E;
+    --cell-hover-deep-ocean-dark: #1D3E6C;
+    --board-bg-ttt-deep-ocean-dark: #0A192F;
+    --cell-bg-ttt-deep-ocean-dark: #1F3A5F;
+    --preview-cell-bg-ttt-deep-ocean-dark: #2A4B7C;
+
+    --bg-color-deep-ocean-light: #E0FFFF;
+    --text-color-deep-ocean-light: #004D40;
+    --panel-bg-deep-ocean-light: #FFFFFF;
+    --border-color-deep-ocean-light: #00838F;
+    --input-bg-deep-ocean-light: #B2EBF2;
+    --input-text-deep-ocean-light: #004D40;
+    --button-primary-deep-ocean-light: #00BCD4;
+    --button-primary-hover-deep-ocean-light: #0097A7;
+    --button-restart-deep-ocean-light: #4CAF50;
+    --button-restart-hover-deep-ocean-light: #388E3C;
+    --button-copy-deep-ocean-light: #D50000;
+    --button-copy-hover-deep-ocean-light: #B71C1C;
+    --cell-bg-deep-ocean-light: #FFFFFF;
+    --cell-hover-deep-ocean-light: #E0FFFF;
+    --board-bg-ttt-deep-ocean-light: #006064;
+    --cell-bg-ttt-deep-ocean-light: #00838F;
+    --preview-cell-bg-ttt-deep-ocean-light: #00BCD4;
+
+    /* Sunny Meadow (Dark and Light variations) */
+    --bg-color-sunny-meadow-dark: #2E472C;
+    --text-color-sunny-meadow-dark: #E6F6E6;
+    --panel-bg-sunny-meadow-dark: #3A5F38;
+    --border-color-sunny-meadow-dark: #6B8E23;
+    --input-bg-sunny-meadow-dark: #4B7348;
+    --input-text-sunny-meadow-dark: #E6F6E6;
+    --button-primary-sunny-meadow-dark: #9ACD32;
+    --button-primary-hover-sunny-meadow-dark: #80B32C;
+    --button-restart-sunny-meadow-dark: #FFD700;
+    --button-restart-hover-sunny-meadow-dark: #E0B900;
+    --button-copy-sunny-meadow-dark: #CD5C5C;
+    --button-copy-hover-sunny-meadow-dark: #B22222;
+    --cell-bg-sunny-meadow-dark: #3A5F38;
+    --cell-hover-sunny-meadow-dark: #4B7348;
+    --board-bg-ttt-sunny-meadow-dark: #228B22;
+    --cell-bg-ttt-sunny-meadow-dark: #3CB371;
+    --preview-cell-bg-ttt-sunny-meadow-dark: #66CDAA;
+
+    --bg-color-sunny-meadow-light: #F0F8EE;
+    --text-color-sunny-meadow-light: #3A4B3A;
+    --panel-bg-sunny-meadow-light: #FFFFFF;
+    --border-color-sunny-meadow-light: #8FBC8F;
+    --input-bg-sunny-meadow-light: #E0EEE0;
+    --input-text-sunny-meadow-light: #3A4B3A;
+    --button-primary-sunny-meadow-light: #228B22;
+    --button-primary-hover-sunny-meadow-light: #1C701C;
+    --button-restart-sunny-meadow-light: #FFD700;
+    --button-restart-hover-sunny-meadow-light: #E0B900;
+    --button-copy-sunny-meadow-light: #CD5C5C;
+    --button-copy-hover-sunny-meadow-light: #B22222;
+    --cell-bg-sunny-meadow-light: #FFFFFF;
+    --cell-hover-sunny-meadow-light: #E0EEE0;
+    --board-bg-ttt-sunny-meadow-light: #6B8E23;
+    --cell-bg-ttt-sunny-meadow-light: #9ACD32;
+    --preview-cell-bg-ttt-sunny-meadow-light: #ADFF2F;
+
+    /* Cotton Candy (Dark and Light variations) */
+    --bg-color-cotton-candy-dark: #3F2B5B;
+    --text-color-cotton-candy-dark: #F0E0FF;
+    --panel-bg-cotton-candy-dark: #4F3A6B;
+    --border-color-cotton-candy-dark: #8A2BE2;
+    --input-bg-cotton-candy-dark: #6A5ACD;
+    --input-text-cotton-candy-dark: #F0E0FF;
+    --button-primary-cotton-candy-dark: #BA55D3;
+    --button-primary-hover-cotton-candy-dark: #9932CC;
+    --button-restart-cotton-candy-dark: #DDA0DD;
+    --button-restart-hover-cotton-candy-dark: #C672C6;
+    --button-copy-cotton-candy-dark: #FF69B4;
+    --button-copy-hover-cotton-candy-dark: #FF1493;
+    --cell-bg-cotton-candy-dark: #4F3A6B;
+    --cell-hover-cotton-candy-dark: #6A5ACD;
+    --board-bg-ttt-cotton-candy-dark: #2F2B5B;
+    --cell-bg-ttt-cotton-candy-dark: #3A305B;
+    --preview-cell-bg-ttt-cotton-candy-dark: #4B407B;
+
+    --bg-color-cotton-candy-light: #F9F0FF;
+    --text-color-cotton-candy-light: #6A5ACD;
+    --panel-bg-cotton-candy-light: #FFFFFF;
+    --border-color-cotton-candy-light: #DDA0DD;
+    --input-bg-cotton-candy-light: #E6E6FA;
+    --input-text-cotton-candy-light: #6A5ACD;
+    --button-primary-cotton-candy-light: #BA55D3;
+    --button-primary-hover-cotton-candy-light: #9932CC;
+    --button-restart-cotton-candy-light: #FFC0CB;
+    --button-restart-hover-cotton-candy-light: #FFB6C1;
+    --button-copy-cotton-candy-light: #FF69B4;
+    --button-copy-hover-cotton-candy-light: #FF1493;
+    --cell-bg-cotton-candy-light: #FFFFFF;
+    --cell-hover-cotton-candy-light: #F0F8FF;
+    --board-bg-ttt-cotton-candy-light: #ADD8E6;
+    --cell-bg-ttt-cotton-candy-light: #B0E0E6;
+    --preview-cell-bg-ttt-cotton-candy-light: #E0FFFF;
+
+    /* Twilight Haze (Dark and Light variations) */
+    --bg-color-twilight-haze-dark: #2F2F4F;
+    --text-color-twilight-haze-dark: #E0E0F0;
+    --panel-bg-twilight-haze-dark: #3B3B5B;
+    --border-color-twilight-haze-dark: #6A5ACD;
+    --input-bg-twilight-haze-dark: #483D8B;
+    --input-text-twilight-haze-dark: #E0E0F0;
+    --button-primary-twilight-haze-dark: #BA55D3;
+    --button-primary-hover-twilight-haze-dark: #9932CC;
+    --button-restart-twilight-haze-dark: #8A2BE2;
+    --button-restart-hover-twilight-haze-dark: #6A5ACD;
+    --button-copy-twilight-haze-dark: #FF69B4;
+    --button-copy-hover-twilight-haze-dark: #FF1493;
+    --cell-bg-twilight-haze-dark: #3B3B5B;
+    --cell-hover-twilight-haze-dark: #483D8B;
+    --board-bg-ttt-twilight-haze-dark: #202040;
+    --cell-bg-ttt-twilight-haze-dark: #303050;
+    --preview-cell-bg-ttt-twilight-haze-dark: #404060;
+
+    --bg-color-twilight-haze-light: #CCCCFF;
+    --text-color-twilight-haze-light: #3F3F7F;
+    --panel-bg-twilight-haze-light: #EEEEFF;
+    --border-color-twilight-haze-light: #9A8CD3;
+    --input-bg-twilight-haze-light: #AABBE0;
+    --input-text-twilight-haze-light: #3F3F7F;
+    --button-primary-twilight-haze-light: #7B68EE;
+    --button-primary-hover-twilight-haze-light: #6A5ACD;
+    --button-restart-twilight-haze-light: #9370DB;
+    --button-restart-hover-twilight-haze-light: #8A2BE2;
+    --button-copy-twilight-haze-light: #FFD700;
+    --button-copy-hover-twilight-haze-light: #FFA500;
+    --cell-bg-twilight-haze-light: #EEEEFF;
+    --cell-hover-twilight-haze-light: #D8D8F8;
+    --board-bg-ttt-twilight-haze-light: #A0A0C0;
+    --cell-bg-ttt-twilight-haze-light: #B8B8D8;
+    --preview-cell-bg-ttt-twilight-haze-light: #D0D0E8;
+
+    /* Forest Retreat (Dark and Light variations) */
+    --bg-color-forest-retreat-dark: #2F4F4F;
+    --text-color-forest-retreat-dark: #F5DEB3;
+    --panel-bg-forest-retreat-dark: #36454F;
+    --border-color-forest-retreat-dark: #8B4513;
+    --input-bg-forest-retreat-dark: #556B2F;
+    --input-text-forest-retreat-dark: #F5DEB3;
+    --button-primary-forest-retreat-dark: #6B8E23;
+    --button-primary-hover-forest-retreat-dark: #556B2F;
+    --button-restart-forest-retreat-dark: #D2B48C;
+    --button-restart-hover-forest-retreat-dark: #BC8F8F;
+    --button-copy-forest-retreat-dark: #CD5C5C;
+    --button-copy-hover-forest-retreat-dark: #B22222;
+    --cell-bg-forest-retreat-dark: #36454F;
+    --cell-hover-forest-retreat-dark: #556B2F;
+    --board-bg-ttt-forest-retreat-dark: #2E8B57;
+    --cell-bg-ttt-forest-retreat-dark: #3CB371;
+    --preview-cell-bg-ttt-forest-retreat-dark: #66CDAA;
+
+    --bg-color-forest-retreat-light: #F5FFFA;
+    --text-color-forest-retreat-light: #2F4F4F;
+    --panel-bg-forest-retreat-light: #F0FFF0;
+    --border-color-forest-retreat-light: #8FBC8F;
+    --input-bg-forest-retreat-light: #E6FFE6;
+    --input-text-forest-retreat-light: #2F4F4F;
+    --button-primary-forest-retreat-light: #3CB371;
+    --button-primary-hover-forest-retreat-light: #2E8B57;
+    --button-restart-forest-retreat-light: #D2B48C;
+    --button-restart-hover-forest-retreat-light: #BC8F8F;
+    --button-copy-forest-retreat-light: #CD5C5C;
+    --button-copy-hover-forest-retreat-light: #B22222;
+    --cell-bg-forest-retreat-light: #F0FFF0;
+    --cell-hover-forest-retreat-light: #E6FFE6;
+    --board-bg-ttt-forest-retreat-light: #6B8E23;
+    --cell-bg-ttt-forest-retreat-light: #8FBC8F;
+    --preview-cell-bg-ttt-forest-retreat-light: #9ACD32;
+
+    /* Cyber Punk (Dark and Light variations) */
+    --bg-color-cyber-punk-dark: #1A1A2E;
+    --text-color-cyber-punk-dark: #00FFFF;
+    --panel-bg-cyber-punk-dark: #0F3460;
+    --border-color-cyber-punk-dark: #E94560;
+    --input-bg-cyber-punk-dark: #16213E;
+    --input-text-cyber-punk-dark: #00FFFF;
+    --button-primary-cyber-punk-dark: #FF00FF;
+    --button-primary-hover-cyber-punk-dark: #E94560;
+    --button-restart-cyber-punk-dark: #00FF00;
+    --button-restart-hover-cyber-punk-dark: #00CC00;
+    --button-copy-cyber-punk-dark: #FFFF00;
+    --button-copy-hover-cyber-punk-dark: #CCCC00;
+    --cell-bg-cyber-punk-dark: #0F3460;
+    --cell-hover-cyber-punk-dark: #16213E;
+    --board-bg-ttt-cyber-punk-dark: #0A192F;
+    --cell-bg-ttt-cyber-punk-dark: #0F3460;
+    --preview-cell-bg-ttt-cyber-punk-dark: #16213E;
+
+    --bg-color-cyber-punk-light: #F0F8FF;
+    --text-color-cyber-punk-light: #00008B;
+    --panel-bg-cyber-punk-light: #E0FFFF;
+    --border-color-cyber-punk-light: #8A2BE2;
+    --input-bg-cyber-punk-light: #AFEEEE;
+    --input-text-cyber-punk-light: #00008B;
+    --button-primary-cyber-punk-light: #4169E1;
+    --button-primary-hover-cyber-punk-light: #191970;
+    --button-restart-cyber-punk-light: #00FF7F;
+    --button-restart-hover-cyber-punk-light: #00FA9A;
+    --button-copy-cyber-punk-light: #FF4500;
+    --button-copy-hover-cyber-punk-light: #DC143C;
+    --cell-bg-cyber-punk-light: #E0FFFF;
+    --cell-hover-cyber-punk-light: #AFEEEE;
+    --board-bg-ttt-cyber-punk-light: #6495ED;
+    --cell-bg-ttt-cyber-punk-light: #4682B4;
+    --preview-cell-bg-ttt-cyber-punk-light: #5F9EA0;
+
+    /* Sunset Glow (Dark and Light variations) */
+    --bg-color-sunset-glow-dark: #361500;
+    --text-color-sunset-glow-dark: #FCE883;
+    --panel-bg-sunset-glow-dark: #5E2100;
+    --border-color-sunset-glow-dark: #B84F00;
+    --input-bg-sunset-glow-dark: #7F3000;
+    --input-text-sunset-glow-dark: #FCE883;
+    --button-primary-sunset-glow-dark: #FF8C00;
+    --button-primary-hover-sunset-glow-dark: #E07B00;
+    --button-restart-sunset-glow-dark: #FFD700;
+    --button-restart-hover-sunset-glow-dark: #E0B900;
+    --button-copy-sunset-glow-dark: #DC143C;
+    --button-copy-hover-sunset-glow-dark: #B2002C;
+    --cell-bg-sunset-glow-dark: #5E2100;
+    --cell-hover-sunset-glow-dark: #7F3000;
+    --board-bg-ttt-sunset-glow-dark: #4F1E00;
+    --cell-bg-ttt-sunset-glow-dark: #6F2A00;
+    --preview-cell-bg-ttt-sunset-glow-dark: #8F3700;
+
+    --bg-color-sunset-glow-light: #FFFAF0;
+    --text-color-sunset-glow-light: #8B4513;
+    --panel-bg-sunset-glow-light: #FFF5EE;
+    --border-color-sunset-glow-light: #CD853F;
+    --input-bg-sunset-glow-light: #FFE4C4;
+    --input-text-sunset-glow-light: #8B4513;
+    --button-primary-sunset-glow-light: #FF6347;
+    --button-primary-hover-sunset-glow-light: #FF4500;
+    --button-restart-sunset-glow-light: #FFA07A;
+    --button-restart-hover-sunset-glow-light: #FF7F50;
+    --button-copy-sunset-glow-light: #DC143C;
+    --button-copy-hover-sunset-glow-light: #B22222;
+    --cell-bg-sunset-glow-light: #FFF5EE;
+    --cell-hover-sunset-glow-light: #FFE4C4;
+    --board-bg-ttt-sunset-glow-light: #D2B48C;
+    --cell-bg-ttt-sunset-glow-light: #BC8F8F;
+    --preview-cell-bg-ttt-sunset-glow-light: #F4A460;
+}
+
+/* Base style for the HTML element to define initial colors */
+html {
+    --bg-color: var(--bg-color-default-dark);
+    --text-color: var(--text-color-default-dark);
+    --panel-bg: var(--panel-bg-default-dark);
+    --border-color: var(--border-color-default-dark);
+    --input-bg: var(--input-bg-default-dark);
+    --input-text: var(--input-text-default-dark);
+    --button-primary: var(--button-primary-default-dark);
+    --button-primary-hover: var(--button-primary-hover-default-dark);
+    --button-restart: var(--button-restart-default-dark);
+    --button-restart-hover: var(--button-restart-hover-default-dark);
+    --button-copy: var(--button-copy-default-dark);
+    --button-copy-hover: var(--button-copy-hover-default-dark);
+    --cell-bg: var(--cell-bg-default-dark);
+    --cell-hover: var(--cell-hover-default-dark);
+    --board-bg-ttt: var(--board-bg-ttt-default-dark);
+    --cell-bg-ttt: var(--cell-bg-ttt-default-dark);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-default-dark);
+}
+
+/* Theme Combinations - apply final variables based on aesthetic and base mode */
+
+/* Default Dark aesthetic */
+html.theme-default-dark.theme-base-dark {
+    --bg-color: var(--bg-color-default-dark);
+    --text-color: var(--text-color-default-dark);
+    --panel-bg: var(--panel-bg-default-dark);
+    --border-color: var(--border-color-default-dark);
+    --input-bg: var(--input-bg-default-dark);
+    --input-text: var(--input-text-default-dark);
+    --button-primary: var(--button-primary-default-dark);
+    --button-primary-hover: var(--button-primary-hover-default-dark);
+    --button-restart: var(--button-restart-default-dark);
+    --button-restart-hover: var(--button-restart-hover-default-dark);
+    --button-copy: var(--button-copy-default-dark);
+    --button-copy-hover: var(--button-copy-hover-default-dark);
+    --cell-bg: var(--cell-bg-default-dark);
+    --cell-hover: var(--cell-hover-default-dark);
+    --board-bg-ttt: var(--board-bg-ttt-default-dark);
+    --cell-bg-ttt: var(--cell-bg-ttt-default-dark);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-default-dark);
+}
+
+html.theme-default-dark.theme-base-light {
+    --bg-color: var(--bg-color-default-light);
+    --text-color: var(--text-color-default-light);
+    --panel-bg: var(--panel-bg-default-light);
+    --border-color: var(--border-color-default-light);
+    --input-bg: var(--input-bg-default-light);
+    --input-text: var(--input-text-default-light);
+    --button-primary: var(--button-primary-default-light);
+    --button-primary-hover: var(--button-primary-hover-default-light);
+    --button-restart: var(--button-restart-default-light);
+    --button-restart-hover: var(--button-restart-hover-default-light);
+    --button-copy: var(--button-copy-default-light);
+    --button-copy-hover: var(--button-copy-hover-default-light);
+    --cell-bg: var(--cell-bg-default-light);
+    --cell-hover: var(--cell-hover-default-light);
+    --board-bg-ttt: var(--board-bg-ttt-default-light);
+    --cell-bg-ttt: var(--cell-bg-ttt-default-light);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-default-light);
+}
+
+/* Monochrome Classic aesthetic */
+html.theme-monochrome-classic.theme-base-dark {
+    --bg-color: var(--bg-color-monochrome-classic-dark);
+    --text-color: var(--text-color-monochrome-classic-dark);
+    --panel-bg: var(--panel-bg-monochrome-classic-dark);
+    --border-color: var(--border-color-monochrome-classic-dark);
+    --input-bg: var(--input-bg-monochrome-classic-dark);
+    --input-text: var(--input-text-monochrome-classic-dark);
+    --button-primary: var(--button-primary-monochrome-classic-dark);
+    --button-primary-hover: var(--button-primary-hover-monochrome-classic-dark);
+    --button-restart: var(--button-restart-monochrome-classic-dark);
+    --button-restart-hover: var(--button-restart-hover-monochrome-classic-dark);
+    --button-copy: var(--button-copy-monochrome-classic-dark);
+    --button-copy-hover: var(--button-copy-hover-monochrome-classic-dark);
+    --cell-bg: var(--cell-bg-monochrome-classic-dark);
+    --cell-hover: var(--cell-hover-monochrome-classic-dark);
+    --board-bg-ttt: var(--board-bg-ttt-monochrome-classic-dark);
+    --cell-bg-ttt: var(--cell-bg-ttt-monochrome-classic-dark);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-monochrome-classic-dark);
+    --piece-color-I: #BBBBBB;
+    --piece-color-L: #AAAAAA;
+    --piece-color-O: #999999;
+    --piece-color-Z: #888888;
+    --piece-color-T: #777777;
+    --piece-color-S: #666666;
+    --piece-color-J: #555555;
+    --piece-color-ghost: rgba(187, 187, 187, 0.3);
+}
+
+html.theme-monochrome-classic.theme-base-light {
+    --bg-color: var(--bg-color-monochrome-classic-light);
+    --text-color: var(--text-color-monochrome-classic-light);
+    --panel-bg: var(--panel-bg-monochrome-classic-light);
+    --border-color: var(--border-color-monochrome-classic-light);
+    --input-bg: var(--input-bg-monochrome-classic-light);
+    --input-text: var(--input-text-monochrome-classic-light);
+    --button-primary: var(--button-primary-monochrome-classic-light);
+    --button-primary-hover: var(--button-primary-hover-monochrome-classic-light);
+    --button-restart: var(--button-restart-monochrome-classic-light);
+    --button-restart-hover: var(--button-restart-hover-monochrome-classic-light);
+    --button-copy: var(--button-copy-monochrome-classic-light);
+    --button-copy-hover: var(--button-copy-hover-monochrome-classic-light);
+    --cell-bg: var(--cell-bg-monochrome-classic-light);
+    --cell-hover: var(--cell-hover-monochrome-classic-light);
+    --board-bg-ttt: var(--board-bg-ttt-monochrome-classic-light);
+    --cell-bg-ttt: var(--cell-bg-ttt-monochrome-classic-light);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-monochrome-classic-light);
+    --piece-color-I: #555555;
+    --piece-color-L: #666666;
+    --piece-color-O: #777777;
+    --piece-color-Z: #888888;
+    --piece-color-T: #999999;
+    --piece-color-S: #AAAAAA;
+    --piece-color-J: #BBBBBB;
+    --piece-color-ghost: rgba(119, 119, 119, 0.3);
+}
+
+/* Urban Grey aesthetic */
+html.theme-urban-grey.theme-base-dark {
+    --bg-color: var(--bg-color-urban-grey-dark);
+    --text-color: var(--text-color-urban-grey-dark);
+    --panel-bg: var(--panel-bg-urban-grey-dark);
+    --border-color: var(--border-color-urban-grey-dark);
+    --input-bg: var(--input-bg-urban-grey-dark);
+    --input-text: var(--input-text-urban-grey-dark);
+    --button-primary: var(--button-primary-urban-grey-dark);
+    --button-primary-hover: var(--button-primary-hover-urban-grey-dark);
+    --button-restart: var(--button-restart-urban-grey-dark);
+    --button-restart-hover: var(--button-restart-hover-urban-grey-dark);
+    --button-copy: var(--button-copy-urban-grey-dark);
+    --button-copy-hover: var(--button-copy-hover-urban-grey-dark);
+    --cell-bg: var(--cell-bg-urban-grey-dark);
+    --cell-hover: var(--cell-hover-urban-grey-dark);
+    --board-bg-ttt: var(--board-bg-ttt-urban-grey-dark);
+    --cell-bg-ttt: var(--cell-bg-ttt-urban-grey-dark);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-urban-grey-dark);
+}
+
+html.theme-urban-grey.theme-base-light {
+    --bg-color: var(--bg-color-urban-grey-light);
+    --text-color: var(--text-color-urban-grey-light);
+    --panel-bg: var(--panel-bg-urban-grey-light);
+    --border-color: var(--border-color-urban-grey-light);
+    --input-bg: var(--input-bg-urban-grey-light);
+    --input-text: var(--input-text-urban-grey-light);
+    --button-primary: var(--button-primary-urban-grey-light);
+    --button-primary-hover: var(--button-primary-hover-urban-grey-light);
+    --button-restart: var(--button-restart-urban-grey-light);
+    --button-restart-hover: var(--button-restart-hover-urban-grey-light);
+    --button-copy: var(--button-copy-urban-grey-light);
+    --button-copy-hover: var(--button-copy-hover-urban-grey-light);
+    --cell-bg: var(--cell-bg-urban-grey-light);
+    --cell-hover: var(--cell-hover-urban-grey-light);
+    --board-bg-ttt: var(--board-bg-ttt-urban-grey-light);
+    --cell-bg-ttt: var(--cell-bg-ttt-urban-grey-light);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-urban-grey-light);
+}
+
+/* Deep Ocean aesthetic */
+html.theme-deep-ocean.theme-base-dark {
+    --bg-color: var(--bg-color-deep-ocean-dark);
+    --text-color: var(--text-color-deep-ocean-dark);
+    --panel-bg: var(--panel-bg-deep-ocean-dark);
+    --border-color: var(--border-color-deep-ocean-dark);
+    --input-bg: var(--input-bg-deep-ocean-dark);
+    --input-text: var(--input-text-deep-ocean-dark);
+    --button-primary: var(--button-primary-deep-ocean-dark);
+    --button-primary-hover: var(--button-primary-hover-deep-ocean-dark);
+    --button-restart: var(--button-restart-deep-ocean-dark);
+    --button-restart-hover: var(--button-restart-hover-deep-ocean-dark);
+    --button-copy: var(--button-copy-deep-ocean-dark);
+    --button-copy-hover: var(--button-copy-hover-deep-ocean-dark);
+    --cell-bg: var(--cell-bg-deep-ocean-dark);
+    --cell-hover: var(--cell-hover-deep-ocean-dark);
+    --board-bg-ttt: var(--board-bg-ttt-deep-ocean-dark);
+    --cell-bg-ttt: var(--cell-bg-ttt-deep-ocean-dark);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-deep-ocean-dark);
+}
+
+html.theme-deep-ocean.theme-base-light {
+    --bg-color: var(--bg-color-deep-ocean-light);
+    --text-color: var(--text-color-deep-ocean-light);
+    --panel-bg: var(--panel-bg-deep-ocean-light);
+    --border-color: var(--border-color-deep-ocean-light);
+    --input-bg: var(--input-bg-deep-ocean-light);
+    --input-text: var(--input-text-deep-ocean-light);
+    --button-primary: var(--button-primary-deep-ocean-light);
+    --button-primary-hover: var(--button-primary-hover-deep-ocean-light);
+    --button-restart: var(--button-restart-deep-ocean-light);
+    --button-restart-hover: var(--button-restart-hover-deep-ocean-light);
+    --button-copy: var(--button-copy-deep-ocean-light);
+    --button-copy-hover: var(--button-copy-hover-deep-ocean-light);
+    --cell-bg: var(--cell-bg-deep-ocean-light);
+    --cell-hover: var(--cell-hover-deep-ocean-light);
+    --board-bg-ttt: var(--board-bg-ttt-deep-ocean-light);
+    --cell-bg-ttt: var(--cell-bg-ttt-deep-ocean-light);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-deep-ocean-light);
+}
+
+/* Sunny Meadow aesthetic */
+html.theme-sunny-meadow.theme-base-dark {
+    --bg-color: var(--bg-color-sunny-meadow-dark);
+    --text-color: var(--text-color-sunny-meadow-dark);
+    --panel-bg: var(--panel-bg-sunny-meadow-dark);
+    --border-color: var(--border-color-sunny-meadow-dark);
+    --input-bg: var(--input-bg-sunny-meadow-dark);
+    --input-text: var(--input-text-sunny-meadow-dark);
+    --button-primary: var(--button-primary-sunny-meadow-dark);
+    --button-primary-hover: var(--button-primary-hover-sunny-meadow-dark);
+    --button-restart: var(--button-restart-sunny-meadow-dark);
+    --button-restart-hover: var(--button-restart-hover-sunny-meadow-dark);
+    --button-copy: var(--button-copy-sunny-meadow-dark);
+    --button-copy-hover: var(--button-copy-hover-sunny-meadow-dark);
+    --cell-bg: var(--cell-bg-sunny-meadow-dark);
+    --cell-hover: var(--cell-hover-sunny-meadow-dark);
+    --board-bg-ttt: var(--board-bg-ttt-sunny-meadow-dark);
+    --cell-bg-ttt: var(--cell-bg-ttt-sunny-meadow-dark);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-sunny-meadow-dark);
+}
+
+html.theme-sunny-meadow.theme-base-light {
+    --bg-color: var(--bg-color-sunny-meadow-light);
+    --text-color: var(--text-color-sunny-meadow-light);
+    --panel-bg: var(--panel-bg-sunny-meadow-light);
+    --border-color: var(--border-color-sunny-meadow-light);
+    --input-bg: var(--input-bg-sunny-meadow-light);
+    --input-text: var(--input-text-sunny-meadow-light);
+    --button-primary: var(--button-primary-sunny-meadow-light);
+    --button-primary-hover: var(--button-primary-hover-sunny-meadow-light);
+    --button-restart: var(--button-restart-sunny-meadow-light);
+    --button-restart-hover: var(--button-restart-hover-sunny-meadow-light);
+    --button-copy: var(--button-copy-sunny-meadow-light);
+    --button-copy-hover: var(--button-copy-hover-sunny-meadow-light);
+    --cell-bg: var(--cell-bg-sunny-meadow-light);
+    --cell-hover: var(--cell-hover-sunny-meadow-light);
+    --board-bg-ttt: var(--board-bg-ttt-sunny-meadow-light);
+    --cell-bg-ttt: var(--cell-bg-ttt-sunny-meadow-light);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-sunny-meadow-light);
+}
+
+/* Cotton Candy aesthetic */
+html.theme-cotton-candy.theme-base-dark {
+    --bg-color: var(--bg-color-cotton-candy-dark);
+    --text-color: var(--text-color-cotton-candy-dark);
+    --panel-bg: var(--panel-bg-cotton-candy-dark);
+    --border-color: var(--border-color-cotton-candy-dark);
+    --input-bg: var(--input-bg-cotton-candy-dark);
+    --input-text: var(--input-text-cotton-candy-dark);
+    --button-primary: var(--button-primary-cotton-candy-dark);
+    --button-primary-hover: var(--button-primary-hover-cotton-candy-dark);
+    --button-restart: var(--button-restart-cotton-candy-dark);
+    --button-restart-hover: var(--button-restart-hover-cotton-candy-dark);
+    --button-copy: var(--button-copy-cotton-candy-dark);
+    --button-copy-hover: var(--button-copy-hover-cotton-candy-dark);
+    --cell-bg: var(--cell-bg-cotton-candy-dark);
+    --cell-hover: var(--cell-hover-cotton-candy-dark);
+    --board-bg-ttt: var(--board-bg-ttt-cotton-candy-dark);
+    --cell-bg-ttt: var(--cell-bg-ttt-cotton-candy-dark);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-cotton-candy-dark);
+}
+
+html.theme-cotton-candy.theme-base-light {
+    --bg-color: var(--bg-color-cotton-candy-light);
+    --text-color: var(--text-color-cotton-candy-light);
+    --panel-bg: var(--panel-bg-cotton-candy-light);
+    --border-color: var(--border-color-cotton-candy-light);
+    --input-bg: var(--input-bg-cotton-candy-light);
+    --input-text: var(--input-text-cotton-candy-light);
+    --button-primary: var(--button-primary-cotton-candy-light);
+    --button-primary-hover: var(--button-primary-hover-cotton-candy-light);
+    --button-restart: var(--button-restart-cotton-candy-light);
+    --button-restart-hover: var(--button-restart-hover-cotton-candy-light);
+    --button-copy: var(--button-copy-cotton-candy-light);
+    --button-copy-hover: var(--button-copy-hover-cotton-candy-light);
+    --cell-bg: var(--cell-bg-cotton-candy-light);
+    --cell-hover: var(--cell-hover-cotton-candy-light);
+    --board-bg-ttt: var(--board-bg-ttt-cotton-candy-light);
+    --cell-bg-ttt: var(--cell-bg-ttt-cotton-candy-light);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-cotton-candy-light);
+}
+
+/* Twilight Haze aesthetic */
+html.theme-twilight-haze.theme-base-dark {
+    --bg-color: var(--bg-color-twilight-haze-dark);
+    --text-color: var(--text-color-twilight-haze-dark);
+    --panel-bg: var(--panel-bg-twilight-haze-dark);
+    --border-color: var(--border-color-twilight-haze-dark);
+    --input-bg: var(--input-bg-twilight-haze-dark);
+    --input-text: var(--input-text-twilight-haze-dark);
+    --button-primary: var(--button-primary-twilight-haze-dark);
+    --button-primary-hover: var(--button-primary-hover-twilight-haze-dark);
+    --button-restart: var(--button-restart-twilight-haze-dark);
+    --button-restart-hover: var(--button-restart-hover-twilight-haze-dark);
+    --button-copy: var(--button-copy-twilight-haze-dark);
+    --button-copy-hover: var(--button-copy-hover-twilight-haze-dark);
+    --cell-bg: var(--cell-bg-twilight-haze-dark);
+    --cell-hover: var(--cell-hover-twilight-haze-dark);
+    --board-bg-ttt: var(--board-bg-ttt-twilight-haze-dark);
+    --cell-bg-ttt: var(--cell-bg-ttt-twilight-haze-dark);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-twilight-haze-dark);
+}
+
+html.theme-twilight-haze.theme-base-light {
+    --bg-color: var(--bg-color-twilight-haze-light);
+    --text-color: var(--text-color-twilight-haze-light);
+    --panel-bg: var(--panel-bg-twilight-haze-light);
+    --border-color: var(--border-color-twilight-haze-light);
+    --input-bg: var(--input-bg-twilight-haze-light);
+    --input-text: var(--input-text-twilight-haze-light);
+    --button-primary: var(--button-primary-twilight-haze-light);
+    --button-primary-hover: var(--button-primary-hover-twilight-haze-light);
+    --button-restart: var(--button-restart-twilight-haze-light);
+    --button-restart-hover: var(--button-restart-hover-twilight-haze-light);
+    --button-copy: var(--button-copy-twilight-haze-light);
+    --button-copy-hover: var(--button-copy-hover-twilight-haze-light);
+    --cell-bg: var(--cell-bg-twilight-haze-light);
+    --cell-hover: var(--cell-hover-twilight-haze-light);
+    --board-bg-ttt: var(--board-bg-ttt-twilight-haze-light);
+    --cell-bg-ttt: var(--cell-bg-ttt-twilight-haze-light);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-twilight-haze-light);
+}
+
+/* Forest Retreat aesthetic */
+html.theme-forest-retreat.theme-base-dark {
+    --bg-color: var(--bg-color-forest-retreat-dark);
+    --text-color: var(--text-color-forest-retreat-dark);
+    --panel-bg: var(--panel-bg-forest-retreat-dark);
+    --border-color: var(--border-color-forest-retreat-dark);
+    --input-bg: var(--input-bg-forest-retreat-dark);
+    --input-text: var(--input-text-forest-retreat-dark);
+    --button-primary: var(--button-primary-forest-retreat-dark);
+    --button-primary-hover: var(--button-primary-hover-forest-retreat-dark);
+    --button-restart: var(--button-restart-forest-retreat-dark);
+    --button-restart-hover: var(--button-restart-hover-forest-retreat-dark);
+    --button-copy: var(--button-copy-forest-retreat-dark);
+    --button-copy-hover: var(--button-copy-hover-forest-retreat-dark);
+    --cell-bg: var(--cell-bg-forest-retreat-dark);
+    --cell-hover: var(--cell-hover-forest-retreat-dark);
+    --board-bg-ttt: var(--board-bg-ttt-forest-retreat-dark);
+    --cell-bg-ttt: var(--cell-bg-ttt-forest-retreat-dark);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-forest-retreat-dark);
+}
+
+html.theme-forest-retreat.theme-base-light {
+    --bg-color: var(--bg-color-forest-retreat-light);
+    --text-color: var(--text-color-forest-retreat-light);
+    --panel-bg: var(--panel-bg-forest-retreat-light);
+    --border-color: var(--border-color-forest-retreat-light);
+    --input-bg: var(--input-bg-forest-retreat-light);
+    --input-text: var(--input-text-forest-retreat-light);
+    --button-primary: var(--button-primary-forest-retreat-light);
+    --button-primary-hover: var(--button-primary-hover-forest-retreat-light);
+    --button-restart: var(--button-restart-forest-retreat-light);
+    --button-restart-hover: var(--button-restart-hover-forest-retreat-light);
+    --button-copy: var(--button-copy-forest-retreat-light);
+    --button-copy-hover: var(--button-copy-hover-forest-retreat-light);
+    --cell-bg: var(--cell-bg-forest-retreat-light);
+    --cell-hover: var(--cell-hover-forest-retreat-light);
+    --board-bg-ttt: var(--board-bg-ttt-forest-retreat-light);
+    --cell-bg-ttt: var(--cell-bg-ttt-forest-retreat-light);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-forest-retreat-light);
+}
+
+/* Cyber Punk aesthetic */
+html.theme-cyber-punk.theme-base-dark {
+    --bg-color: var(--bg-color-cyber-punk-dark);
+    --text-color: var(--text-color-cyber-punk-dark);
+    --panel-bg: var(--panel-bg-cyber-punk-dark);
+    --border-color: var(--border-color-cyber-punk-dark);
+    --input-bg: var(--input-bg-cyber-punk-dark);
+    --input-text: var(--input-text-cyber-punk-dark);
+    --button-primary: var(--button-primary-cyber-punk-dark);
+    --button-primary-hover: var(--button-primary-hover-cyber-punk-dark);
+    --button-restart: var(--button-restart-cyber-punk-dark);
+    --button-restart-hover: var(--button-restart-hover-cyber-punk-dark);
+    --button-copy: var(--button-copy-cyber-punk-dark);
+    --button-copy-hover: var(--button-copy-hover-cyber-punk-dark);
+    --cell-bg: var(--cell-bg-cyber-punk-dark);
+    --cell-hover: var(--cell-hover-cyber-punk-dark);
+    --board-bg-ttt: var(--board-bg-ttt-cyber-punk-dark);
+    --cell-bg-ttt: var(--cell-bg-ttt-cyber-punk-dark);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-cyber-punk-dark);
+}
+
+html.theme-cyber-punk.theme-base-light {
+    --bg-color: var(--bg-color-cyber-punk-light);
+    --text-color: var(--text-color-cyber-punk-light);
+    --panel-bg: var(--panel-bg-cyber-punk-light);
+    --border-color: var(--border-color-cyber-punk-light);
+    --input-bg: var(--input-bg-cyber-punk-light);
+    --input-text: var(--input-text-cyber-punk-light);
+    --button-primary: var(--button-primary-cyber-punk-light);
+    --button-primary-hover: var(--button-primary-hover-cyber-punk-light);
+    --button-restart: var(--button-restart-cyber-punk-light);
+    --button-restart-hover: var(--button-restart-hover-cyber-punk-light);
+    --button-copy: var(--button-copy-cyber-punk-light);
+    --button-copy-hover: var(--button-copy-hover-cyber-punk-light);
+    --cell-bg: var(--cell-bg-cyber-punk-light);
+    --cell-hover: var(--cell-hover-cyber-punk-light);
+    --board-bg-ttt: var(--board-bg-ttt-cyber-punk-light);
+    --cell-bg-ttt: var(--cell-bg-ttt-cyber-punk-light);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-cyber-punk-light);
+}
+
+/* Sunset Glow aesthetic */
+html.theme-sunset-glow.theme-base-dark {
+    --bg-color: var(--bg-color-sunset-glow-dark);
+    --text-color: var(--text-color-sunset-glow-dark);
+    --panel-bg: var(--panel-bg-sunset-glow-dark);
+    --border-color: var(--border-color-sunset-glow-dark);
+    --input-bg: var(--input-bg-sunset-glow-dark);
+    --input-text: var(--input-text-sunset-glow-dark);
+    --button-primary: var(--button-primary-sunset-glow-dark);
+    --button-primary-hover: var(--button-primary-hover-sunset-glow-dark);
+    --button-restart: var(--button-restart-sunset-glow-dark);
+    --button-restart-hover: var(--button-restart-hover-sunset-glow-dark);
+    --button-copy: var(--button-copy-sunset-glow-dark);
+    --button-copy-hover: var(--button-copy-hover-sunset-glow-dark);
+    --cell-bg: var(--cell-bg-sunset-glow-dark);
+    --cell-hover: var(--cell-hover-sunset-glow-dark);
+    --board-bg-ttt: var(--board-bg-ttt-sunset-glow-dark);
+    --cell-bg-ttt: var(--cell-bg-ttt-sunset-glow-dark);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-sunset-glow-dark);
+}
+
+html.theme-sunset-glow.theme-base-light {
+    --bg-color: var(--bg-color-sunset-glow-light);
+    --text-color: var(--text-color-sunset-glow-light);
+    --panel-bg: var(--panel-bg-sunset-glow-light);
+    --border-color: var(--border-color-sunset-glow-light);
+    --input-bg: var(--input-bg-sunset-glow-light);
+    --input-text: var(--input-text-sunset-glow-light);
+    --button-primary: var(--button-primary-sunset-glow-light);
+    --button-primary-hover: var(--button-primary-hover-sunset-glow-light);
+    --button-restart: var(--button-restart-sunset-glow-light);
+    --button-restart-hover: var(--button-restart-hover-sunset-glow-light);
+    --button-copy: var(--button-copy-sunset-glow-light);
+    --button-copy-hover: var(--button-copy-hover-sunset-glow-light);
+    --cell-bg: var(--cell-bg-sunset-glow-light);
+    --cell-hover: var(--cell-hover-sunset-glow-light);
+    --board-bg-ttt: var(--board-bg-ttt-sunset-glow-light);
+    --cell-bg-ttt: var(--cell-bg-ttt-sunset-glow-light);
+    --preview-cell-bg-ttt: var(--preview-cell-bg-ttt-sunset-glow-light);
+}
+
 body {
     display: flex;
     justify-content: center;
@@ -7,9 +830,71 @@ body {
     height: 100vh;
     margin: 0;
     font-family: 'Orbitron', sans-serif;
-    background-color: #1a1a1a;
-    color: #f0f0f0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
 }
+
+#top-right-hotspot {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: auto; /* Adjust width to content */
+    height: auto; /* Adjust height to content */
+    padding: 10px; /* Add some padding around the controls and display */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Align items to the right */
+    z-index: 1001;
+}
+
+#top-right-controls {
+    display: flex;
+    gap: 10px;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 1000;
+    color: var(--text-color);
+}
+
+.controls-hidden-by-js {
+    opacity: 0;
+}
+
+#top-right-hotspot:hover #top-right-controls {
+    opacity: 1;
+}
+
+#theme-toggle-container {
+    cursor: pointer;
+}
+
+#aesthetic-toggle-container {
+    cursor: pointer;
+}
+
+#theme-toggle-container #theme-icon {
+    font-size: 28px;
+    line-height: 1;
+}
+
+#aesthetic-toggle-container #aesthetic-icon {
+    font-size: 28px;
+    line-height: 1;
+}
+
+#theme-name-display {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 1.2em;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    z-index: 1002; /* Above all other controls */
+    pointer-events: none; /* Allows clicks to pass through */
+    margin-top: 10px; /* Space from controls */
+    margin-right: 10px; /* Align with controls */
+}
+
 
 #connection-status {
     position: fixed;
@@ -47,7 +932,7 @@ body {
     font-weight: bold;
     margin-bottom: 10px;
     height: 30px;
-    font-family: 'Orbitron', sans-serif; /* Apply Orbitron font */
+    font-family: 'Orbitron', sans-serif;
 }
 
 #side-panel {
@@ -57,13 +942,13 @@ body {
     gap: 15px;
     width: 200px;
     padding: 10px;
-    border: 2px solid #444;
+    border: 2px solid var(--border-color);
     border-radius: 5px;
-    background-color: #2c2c2c;
+    background-color: var(--panel-bg);
 }
 
 #side-panel > div {
-    border: 1px solid #555;
+    border: 1px solid var(--border-color);
     padding: 8px;
     border-radius: 3px;
     margin-bottom: 5px;
@@ -100,7 +985,7 @@ body {
     padding: 12px 25px;
     font-size: 18px;
     cursor: pointer;
-    background-color: #4CAF50;
+    background-color: var(--button-restart);
     color: white;
     border: none;
     border-radius: 5px;
@@ -108,12 +993,12 @@ body {
 }
 
 #restart:hover {
-    background-color: #45a049;
+    background-color: var(--button-restart-hover);
 }
 
 #menu {
     text-align: center;
-    background-color: #2c2c2c;
+    background-color: var(--panel-bg);
     padding: 40px;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
@@ -127,9 +1012,9 @@ body {
     padding: 10px;
     font-size: 16px;
     border-radius: 5px;
-    border: 1px solid #444;
-    background-color: #333;
-    color: #f0f0f0;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--input-text);
     font-family: 'Orbitron', sans-serif;
 }
 
@@ -137,7 +1022,7 @@ body {
     padding: 12px 25px;
     font-size: 16px;
     cursor: pointer;
-    background-color: #008CBA;
+    background-color: var(--button-primary);
     color: white;
     border: none;
     border-radius: 5px;
@@ -147,7 +1032,7 @@ body {
 }
 
 #hostButton:hover, #joinButton:hover, #joinGameButton:hover {
-    background-color: #007B9A;
+    background-color: var(--button-primary-hover);
 }
 
 #hostInfo, #joinInfo {
@@ -159,9 +1044,9 @@ body {
     padding: 10px;
     font-size: 16px;
     border-radius: 5px;
-    border: 1px solid #444;
-    background-color: #333;
-    color: #f0f0f0;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--input-text);
     width: 250px;
     font-family: 'Orbitron', sans-serif;
 }
@@ -170,9 +1055,9 @@ body {
     padding: 10px;
     font-size: 16px;
     border-radius: 5px;
-    border: 1px solid #444;
-    background-color: #333;
-    color: #f0f0f0;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--input-text);
     width: 250px;
 }
 
@@ -180,7 +1065,7 @@ body {
     padding: 10px 15px;
     font-size: 14px;
     cursor: pointer;
-    background-color: #f44336;
+    background-color: var(--button-copy);
     color: white;
     border: none;
     border-radius: 5px;
@@ -190,7 +1075,7 @@ body {
 }
 
 #copyButton:hover {
-    background-color: #d32f2f;
+    background-color: var(--button-copy-hover);
 }
 
 #qrcode {
@@ -210,7 +1095,7 @@ body {
 .tictactoe .cell {
     width: 100px;
     height: 100px;
-    background-color: #2c2c2c;
+    background-color: var(--cell-bg);
     border-radius: 5px;
     font-size: 60px;
     font-weight: bold;
@@ -222,7 +1107,7 @@ body {
 }
 
 .tictactoe .cell:hover {
-    background-color: #3c3c3c;
+    background-color: var(--cell-hover);
 }
 
 /* Othello specific styles */
@@ -262,14 +1147,14 @@ body {
     grid-template-columns: repeat(10, 25px);
     grid-template-rows: repeat(20, 25px);
     grid-gap: 1px;
-    background-color: rgb(25 25 25);
-    border: 5px solid #444;
+    background-color: var(--board-bg-ttt);
+    border: 5px solid var(--border-color);
 }
 
 .ttt .cell {
     width: 25px;
     height: 25px;
-    background-color: rgb(36 36 36);
+    background-color: var(--cell-bg-ttt);
     border-radius: 2px;
 }
 
@@ -282,9 +1167,9 @@ body {
 }
 
 #nextPiecePreview {
-    border: 5px solid #444;
+    border: 5px solid var(--border-color);
     padding: 10px;
-    background-color: #2c2c2c;
+    background-color: var(--panel-bg);
     border-radius: 5px;
 }
 
@@ -299,7 +1184,7 @@ body {
 .ttt-preview-grid .cell {
     width: 25px;
     height: 25px;
-    background-color: #3c3c3c;
+    background-color: var(--preview-cell-bg-ttt);
     border-radius: 2px;
 }
 
@@ -308,65 +1193,65 @@ body {
 }
 
 .ttt-preview-grid .cell.filled-I {
-    background-color: #FF1493; /* DeepPink */
+    background-color: var(--piece-color-I, #FF1493); /* DeepPink */
 }
 
 .ttt-preview-grid .cell.filled-L {
-    background-color: #FF69B4; /* HotPink */
+    background-color: var(--piece-color-L, #FF69B4); /* HotPink */
 }
 
 .ttt-preview-grid .cell.filled-O {
-    background-color: #00BFFF; /* DeepSkyBlue */
+    background-color: var(--piece-color-O, #00BFFF); /* DeepSkyBlue */
 }
 
 .ttt-preview-grid .cell.filled-Z {
-    background-color: #87CEEB; /* SkyBlue */
+    background-color: var(--piece-color-Z, #87CEEB); /* SkyBlue */
 }
 
 .ttt-preview-grid .cell.filled-T {
-    background-color: #FF8C00; /* DarkOrange */
+    background-color: var(--piece-color-T, #FF8C00); /* DarkOrange */
 }
 
 .ttt-preview-grid .cell.filled-S {
-    background-color: #32CD32; /* LimeGreen */
+    background-color: var(--piece-color-S, #32CD32); /* LimeGreen */
 }
 
 .ttt-preview-grid .cell.filled-J {
-    background-color: #FFFFFF; /* White */
+    background-color: var(--piece-color-J, #FFFFFF); /* White */
 }
 
 .ttt-preview-grid .cell.filled-G {
-    background-color: #808080; /* Gray */
+    background-color: var(--piece-color-G, #808080); /* Gray */
 }
 
 .ttt .cell.filled-I {
-    background-color: #FF1493; /* DeepPink */
+    background-color: var(--piece-color-I, #FF1493); /* DeepPink */
 }
 
 .ttt .cell.filled-L {
-    background-color: #FF69B4; /* HotPink */
+    background-color: var(--piece-color-L, #FF69B4); /* HotPink */
 }
 
 .ttt .cell.filled-O {
-    background-color: #00BFFF; /* DeepSkyBlue */
+    background-color: var(--piece-color-O, #00BFFF); /* DeepSkyBlue */
 }
 
 .ttt .cell.filled-Z {
-    background-color: #87CEEB; /* SkyBlue */
+    background-color: var(--piece-color-Z, #87CEEB); /* SkyBlue */
 }
 
 .ttt .cell.filled-T {
-    background-color: #FF8C00; /* DarkOrange */
+    background-color: var(--piece-color-T, #FF8C00); /* DarkOrange */
 }
 
 .ttt .cell.filled-S {
-    background-color: #32CD32; /* LimeGreen */
+    background-color: var(--piece-color-S, #32CD32); /* LimeGreen */
 }
 
 .ttt .cell.filled-J {
-    background-color: #FFFFFF; /* White */
+    background-color: var(--piece-color-J, #FFFFFF); /* White */
 }
 
 .ttt .cell.filled-G {
-    background-color: #808080; /* Gray */
+    background-color: var(--piece-color-G, #808080); /* Gray */
 }
