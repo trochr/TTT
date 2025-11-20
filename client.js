@@ -61,13 +61,13 @@ function applyCombinedTheme(isInitialLoad = false) {
     if (currentBaseThemeMode === 'auto') {
         const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
         effectiveBaseMode = prefersLight ? 'light' : 'dark';
-        themeIcon.textContent = '⚙️';
+        themeIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-monitor-smartphone group-hover:text-primary text-primary"><path d="M18 8V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h8"></path><path d="M10 19v-3.96 3.15"></path><path d="M7 19h5"></path><rect width="6" height="10" x="16" y="12" rx="2"></rect></svg>';
     } else if (currentBaseThemeMode === 'light') {
-        themeIcon.textContent = '🌙';
+        themeIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon-star group-hover:text-primary text-secondary"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path></svg>';
     } else { // dark
-        themeIcon.textContent = '☀️';
+        themeIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun group-hover:text-primary text-secondary"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>';
     }
-    aestheticIcon.textContent = '🎨'; // Aesthetic icon remains static for now
+    aestheticIcon.innerHTML = '<svg version="1.1" class="aesthetic-svg" width="20" height="20" viewBox="0 0 100 100" id="svg2"><path d="M 84.71,80.953 C 84.541,76.951 78.525,65.051 78.667,60.433 c 0.162,-5.236 3.329,-11.685 9.923,0.922 3.951,7.555 10.016,2.854 10.752,-0.822 2.223,-11.12 -1.078,-24.458 -11.591,-37.527 C 69.567,0.405 37.605,-5.802 16.38,9.144 -4.844,24.092 -5.271,57.752 14.097,77.26 c 17.555,17.676 41.765,25.445 62.007,16.926 2.094,-0.885 8.416,-2.868 8.606,-13.233 z m -56.858,-65.534 c 3.83,-2.697 9.12,-1.78 11.819,2.052 2.699,3.831 1.779,9.122 -2.051,11.819 -3.833,2.699 -9.122,1.78 -11.821,-2.051 -2.698,-3.831 -1.779,-9.121 2.053,-11.82 z m -16.538,34.473 c -2.697,-3.831 -1.777,-9.122 2.053,-11.819 3.828,-2.697 9.122,-1.782 11.819,2.049 2.699,3.832 1.777,9.124 -2.051,11.821 -3.83,2.697 -9.124,1.781 -11.821,-2.051 z m 28.695,-1.996 c -2.701,-3.831 -1.781,-9.124 2.051,-11.821 3.831,-2.697 9.12,-1.779 11.821,2.053 2.697,3.83 1.778,9.12 -2.053,11.819 -3.832,2.698 -9.121,1.782 -11.82,-2.051 z M 23.794,71.543 c -2.697,-3.834 -1.78,-9.127 2.05,-11.824 3.831,-2.697 9.124,-1.779 11.821,2.051 2.697,3.832 1.78,9.125 -2.051,11.822 -3.831,2.697 -9.123,1.778 -11.82,-2.049 z" id="Palette_1_" /></svg>'; // Aesthetic icon remains static for now
 
     // Construct the aesthetic and base theme class names
     const aestheticClass = `theme-${currentAestheticTheme}`;

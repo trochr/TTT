@@ -881,6 +881,14 @@ body {
     line-height: 1;
 }
 
+#aesthetic-icon .aesthetic-svg {
+    fill: var(--text-color);
+}
+
+#aesthetic-toggle-container:hover .aesthetic-svg {
+    fill: var(--button-primary);
+}
+
 #theme-name-display {
     background-color: rgba(0, 0, 0, 0.7);
     color: white;
