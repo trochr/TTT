@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
 /* Opponent Mini Board Styles */
 #opponent-mini-map {
     display: flex;
@@ -26,7 +27,6 @@
     box-shadow: 0 0 2px 1px #6f6a;
     z-index: 2;
 }
-@import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
 
 :root {
     /* Raw color definitions for each theme's dark and light variants */
