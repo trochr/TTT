@@ -1,3 +1,10 @@
+/* Server state silhouette overlay */
+.server-silhouette {
+    outline: 2px solid #6f6;
+    outline-offset: -2px;
+    box-shadow: 0 0 2px 1px #6f6a;
+    z-index: 2;
+}
 @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
 
 :root {

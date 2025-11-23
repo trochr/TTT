@@ -191,7 +191,7 @@ function initializeWebSocket(socket) {
     };
 
     socket.onmessage = (event) => {
-        console.log('WebSocket message received:', event.data);
+        // console.log('WebSocket message received:', event.data); // Disabled for less console noise
         const data = JSON.parse(event.data);
 
         if (data.type === 'playerId') {

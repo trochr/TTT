@@ -67,15 +67,22 @@ const I_KICKS = {
 
 class Ttt {
     constructor(boardElement, statusElement, restartButton, sendMessageCallback) {
+        // Gravity timer for client-side piece fall
+        this.gravityInterval = 800; // ms, level 0
+        this.lastGravityTime = Date.now();
         this.boardElement = boardElement;
         this.statusElement = statusElement;
         this.restartButton = restartButton;
         this.sendMessage = sendMessageCallback;
 
         this.board = this.createBoard();
-        this.clientPiece = null; // The piece rendered on screen, predicted by the client
+        this.serverBoard = null;
+        this.currentPiece = null; // { piece: {...}, piece_number: N }
+        this.nextPiece = null;    // { piece: {...}, piece_number: N }
+        this.clientPiece = null; // (legacy, for rendering, will be set from currentPiece.piece)
         this.serverPiece = null; // The authoritative piece from the server
         this.gameId = null;
+        this.currentPieceNumber = null; // Track the current piece_number from the server
         this.player = null;
         this.isDropping = false;
         this.gameOver = false;
@@ -90,6 +97,7 @@ class Ttt {
         this.levelPlayer1Element = document.getElementById('level-player1');
         this.levelPlayer2Element = document.getElementById('level-player2');
         this.inputDisabled = false;
+        this.nextPiece = null; // Track the next piece for client-side spawning
 
         // Input handling properties
         this.keyStates = {};
@@ -109,15 +117,26 @@ class Ttt {
     }
 
     gameLoop() {
-        if (this.clientPiece && this.serverPiece) {
-            // Interpolate position
-            this.clientPiece.x += (this.serverPiece.x - this.clientPiece.x) * this.interpolationFactor;
-            this.clientPiece.y += (this.serverPiece.y - this.clientPiece.y) * this.interpolationFactor;
-
-            // Snap rotation and shape
-            this.clientPiece.rotation = this.serverPiece.rotation;
-            this.clientPiece.shape = this.serverPiece.shape;
+                // Basic gravity: actually move the piece down if possible, and log
+        if (this.currentPiece && this.currentPiece.piece) {
+            const now = Date.now();
+            if (now - this.lastGravityTime >= this.gravityInterval) {
+                const newY = this.currentPiece.piece.y + 1;
+                const x = this.currentPiece.piece.x;
+                if (this.is_valid_move(this.board, this.currentPiece.piece, x, newY)) {
+                    this.currentPiece.piece.y = newY;
+                    this.clientPiece = this.currentPiece.piece;
+                } else {
+                    // Minimal lock logic: lock piece into board and remove it
+                    this.lock_piece(this.board, this.currentPiece.piece);
+                    this.currentPiece = null;
+                    this.clientPiece = null;
+                    // Do NOT spawn nextPiece here; wait for server update/start to provide the new piece
+                }
+                this.lastGravityTime = now;
+            }
         }
+        // No snapping or interpolation to serverPiece; clientPiece is sovereign
 
         this.draw();
         requestAnimationFrame(this.gameLoop.bind(this));
@@ -262,12 +281,13 @@ class Ttt {
     }
 
     movePiece(dx, dy) {
-        if (!this.clientPiece) return;
+        if (!this.clientPiece || !this.currentPiece) return;
         let newPiece = JSON.parse(JSON.stringify(this.clientPiece));
         if (this.is_valid_move(this.board, newPiece, newPiece.x + dx, newPiece.y + dy)) {
             newPiece.x += dx;
             newPiece.y += dy;
             this.clientPiece = newPiece;
+            this.currentPiece.piece = newPiece; // keep canonical state in sync
             this.sendMessage({ type: 'move', game_id: this.gameId, action: 'move', dx: dx, dy: dy });
         }
     }
@@ -358,6 +378,20 @@ class Ttt {
             });
         });
 
+        // 1b. Overlay server board as silhouette (if available and #DEBUG_SILOUHETTE in URL)
+        if (this.serverBoard && window.location.hash === '#DEBUG_SILOUHETTE') {
+            this.serverBoard.forEach((row, r) => {
+                row.forEach((cell, c) => {
+                    if (cell) {
+                        const cellElement = this.boardElement.children[r * 10 + c];
+                        if (cellElement) {
+                            cellElement.classList.add('server-silhouette');
+                        }
+                    }
+                });
+            });
+        }
+
         // 2. Calculate and draw ghost piece
         const ghostPiece = this.calculateGhostPiece();
         if (ghostPiece) {
@@ -398,20 +432,39 @@ class Ttt {
                 });
             });
         }
+
+        // 4. Overlay server falling piece as silhouette (only if #DEBUG_SILOUHETTE in URL)
+        if (this.serverPiece && this.serverPiece.shape && window.location.hash === '#DEBUG_SILOUHETTE') {
+            const pieceName = this.serverPiece.name;
+            this.serverPiece.shape.forEach((row, r) => {
+                row.forEach((cell, c) => {
+                    if (cell) {
+                        const y = Math.round(this.serverPiece.y) + r;
+                        const x = Math.round(this.serverPiece.x) + c;
+                        if (y >= 0 && y < 20 && x >= 0 && x < 10) {
+                            const cellElement = this.boardElement.children[y * 10 + x];
+                            if (cellElement) {
+                                cellElement.classList.add('server-silhouette');
+                            }
+                        }
+                    }
+                });
+            });
+        }
     }
 
     drawNextPiece(piece) {
-        this.nextPiecePreviewElement.innerHTML = ''; // Clear previous piece
-        if (!piece) return;
+        this.nextPiecePreviewElement.innerHTML = '';
+        // Use nextPiece.piece for preview
+        const pieceObj = this.nextPiece && this.nextPiece.piece ? this.nextPiece.piece : piece;
+        if (!pieceObj) return;
 
         const previewGrid = document.createElement('div');
         previewGrid.classList.add('ttt-preview-grid');
         previewGrid.style.display = 'grid';
-        // Removed hardcoded gridTemplateColumns and gridTemplateRows to use CSS
         previewGrid.style.gridGap = '1px';
 
-        const shape = piece.shape;
-        
+        const shape = pieceObj.shape;
         // Create a 4x4 grid of cells
         const cells = [];
         for (let r = 0; r < 4; r++) {
@@ -431,7 +484,7 @@ class Ttt {
         const colOffset = Math.floor((4 - shapeWidth) / 2);
 
         // Draw the piece
-        const pieceName = piece.name;
+        const pieceName = pieceObj.name;
         for (let r = 0; r < shapeHeight; r++) {
             for (let c = 0; c < shapeWidth; c++) {
                 if (shape[r][c]) {
@@ -453,9 +506,23 @@ class Ttt {
                 this.gameId = data.game_id;
                 this.player = data.player;
                 this.board = data.board;
+                this.serverBoard = data.board ? JSON.parse(JSON.stringify(data.board)) : null;
                 this.serverPiece = data.piece;
-                if (this.serverPiece) {
-                    this.clientPiece = JSON.parse(JSON.stringify(this.serverPiece));
+                if (data.piece) {
+                    this.currentPiece = {
+                        piece: JSON.parse(JSON.stringify(data.piece)),
+                        piece_number: (typeof data.piece_number !== 'undefined') ? data.piece_number : 0
+                    };
+                    this.clientPiece = this.currentPiece.piece; // for rendering
+                    console.log('[CurrentPiece][start]', this.currentPiece);
+                }
+                if (typeof data.next_piece !== 'undefined' && typeof data.piece_number !== 'undefined') {
+                    this.nextPiece = {
+                        piece: JSON.parse(JSON.stringify(data.next_piece)),
+                        piece_number: data.piece_number + 1
+                    };
+                    this.drawNextPiece(this.nextPiece.piece);
+                    console.log('[NextPiece][start]', this.nextPiece);
                 }
                 this.statusElement.textContent = '';
                 this.gameOver = false;
@@ -478,30 +545,35 @@ class Ttt {
                 this.isDropping = false;
                 this.inputDisabled = false; // Re-enable input on update
 
+
                 let playerData;
                 if (data.player1) {
                     playerData = data[this.player];
                 } else {
                     playerData = data;
                 }
+                // Always set currentPiece from the piece field in the update message
+                if (playerData && playerData.piece) {
+                    this.currentPiece = {
+                        piece: JSON.parse(JSON.stringify(playerData.piece)),
+                        piece_number: playerData.piece_number
+                    };
+                    this.clientPiece = this.currentPiece.piece; // for rendering
+                }
+                // Only use next_piece for preview
+                if (playerData && playerData.next_piece) {
+                    this.nextPiece = {
+                        piece: JSON.parse(JSON.stringify(playerData.next_piece)),
+                        piece_number: playerData.piece_number + 1
+                    };
+                    this.drawNextPiece(this.nextPiece.piece);
+                }
 
                 if (playerData) {
                     this.board = playerData.board;
+                    this.serverBoard = playerData.board ? JSON.parse(JSON.stringify(playerData.board)) : null;
                     this.serverPiece = playerData.piece;
-
-                    // If the server sends a piece near the top, it's a new piece.
-                    // In this case, we should "snap" the client piece to the server piece's position
-                    // instead of trying to interpolate from the old position.
-                    if (this.serverPiece && this.serverPiece.y < 2) {
-                        this.clientPiece = JSON.parse(JSON.stringify(this.serverPiece));
-                    } else if (!this.clientPiece && this.serverPiece) {
-                        // Also snap if the client piece doesn't exist yet.
-                        this.clientPiece = JSON.parse(JSON.stringify(this.serverPiece));
-                    } else if (!this.serverPiece) {
-                        // If the server says there is no piece, the client should agree.
-                        this.clientPiece = null;
-                    }
-
+                    // No longer set clientPiece from serverPiece; client is sovereign
                     // These properties are only available in full updates (when data.player1 exists)
                     if (data.player1) {
                         this.toppedOut = playerData.finished;
