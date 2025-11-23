@@ -98,6 +98,7 @@ class Ttt {
         this.levelPlayer2Element = document.getElementById('level-player2');
         this.inputDisabled = false;
         this.nextPiece = null; // Track the next piece for client-side spawning
+        this.opponentMiniMapElement = document.getElementById('opponent-mini-map');
 
         // Input handling properties
         this.keyStates = {};
@@ -532,10 +533,6 @@ class Ttt {
                 this.inputDisabled = false;
                 this.scorePlayer1Element.textContent = 'Player 1: 0';
                 this.scorePlayer2Element.textContent = 'Player 2: 0';
-                this.linesPlayer1Element.textContent = 'Lines: 0';
-                this.linesPlayer2Element.textContent = 'Lines: 0';
-                this.levelPlayer1Element.textContent = 'Level: 0';
-                this.levelPlayer2Element.textContent = 'Level: 0';
                 // Initial draw of next piece
                 if (data.next_piece) {
                     this.drawNextPiece(data.next_piece);
@@ -547,10 +544,28 @@ class Ttt {
 
 
                 let playerData;
-                if (data.player1) {
+                let opponentData = null;
+                if (data.player1 && data.player2) {
                     playerData = data[this.player];
+                    opponentData = this.player === 'player1' ? data.player2 : data.player1;
                 } else {
                     playerData = data;
+                }
+                // Print and render opponent mini map if available
+                if (opponentData && opponentData.board) {
+                    // Render as a grid of divs
+                    if (this.opponentMiniMapElement) {
+                        let html = '<div class="opponent-mini-board">';
+                        for (let r = 0; r < opponentData.board.length; r++) {
+                            html += '<div class="opponent-mini-board-row">';
+                            for (let c = 0; c < opponentData.board[r].length; c++) {
+                                html += `<div class="opponent-mini-board-cell${opponentData.board[r][c] ? ' filled' : ''}"></div>`;
+                            }
+                            html += '</div>';
+                        }
+                        html += '</div>';
+                        this.opponentMiniMapElement.innerHTML = html;
+                    }
                 }
                 // Always set currentPiece from the piece field in the update message
                 if (playerData && playerData.piece) {
@@ -583,7 +598,7 @@ class Ttt {
                         this.drawNextPiece(playerData.next_piece);
                     }
 
-                    // Always update scores/lines/levels if full player data is available
+                    // Always update scores if full player data is available
                     if (data.player1) {
                         if (data.player1.finished) {
                             this.scorePlayer1Element.textContent = `Player 1: ${data.player1.score}`;
@@ -604,11 +619,6 @@ class Ttt {
                             this.scorePlayer2Element.style.color = '';
                             this.scorePlayer2Element.style.textDecoration = '';
                         }
-                        
-                        this.linesPlayer1Element.textContent = `Lines: ${data.player1.lines}`;
-                        this.linesPlayer2Element.textContent = `Lines: ${data.player2.lines}`;
-                        this.levelPlayer1Element.textContent = `Level: ${data.player1.level}`;
-                        this.levelPlayer2Element.textContent = `Level: ${data.player2.level}`;
 
                         this.prevPlayer1Finished = data.player1.finished;
                         this.prevPlayer2Finished = data.player2.finished;
