@@ -156,18 +156,13 @@ class Ttt {
             if (grounded) {
                 if (this.lockDelayStart === null) {
                     this.lockDelayStart = now;
-                    console.log('[DEBUG] Piece grounded: lock delay started');
-                } else {
-                    console.log(`[DEBUG] Piece grounded: lock delay ${now - this.lockDelayStart}ms elapsed`);
                 }
                 if (now - this.lockDelayStart >= 500) { // 0.5s lock delay
-                    console.log('[DEBUG] Locking piece after delay (gameLoop)');
                     this.lock_piece(this.board, this.currentPiece.piece);
                     const cleared = this.clear_lines(this.board);
                     this.board = cleared.board;
                     // Inform server that the piece was locked
                     this.sendMessage({ type: 'move', game_id: this.gameId, action: 'hard_drop' });
-                    console.log('[DEBUG] Piece locked, spawning nextPiece from client cache');
                     if (this.nextPiece && this.nextPiece.piece) {
                         const next = JSON.parse(JSON.stringify(this.nextPiece.piece));
                         this.currentPiece = { piece: next };
