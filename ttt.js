@@ -1,3 +1,12 @@
+// Match server gravity: frames per drop at each level
+const LEVEL_FRAMES = [
+    48, 43, 38, 33, 28, 23, 18, 13, 8, 6,  // Levels 0-9
+    5, 5, 5,  // Levels 10-12
+    4, 4, 4,  // Levels 13-15
+    3, 3, 3,  // Levels 16-18
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  // Levels 19-28
+    1  // Level 29+
+];
 const PIECES = {
     'T': {
         0: [[0, 1, 0], [1, 1, 1], [0, 0, 0]],
@@ -66,9 +75,18 @@ const I_KICKS = {
 };
 
 class Ttt {
+        ensureBoardHeight() {
+            // Always keep the board at 20 rows
+            while (this.board.length < 20) {
+                this.board.unshift(Array(10).fill(0));
+            }
+            while (this.board.length > 20) {
+                this.board.shift();
+            }
+        }
     constructor(boardElement, statusElement, restartButton, sendMessageCallback) {
         // Gravity timer for client-side piece fall
-        this.gravityInterval = 800; // ms, level 0
+        this.gravityInterval = LEVEL_FRAMES[0] * (1000 / 60); // ms, level 0
         this.lastGravityTime = Date.now();
         this.boardElement = boardElement;
         this.statusElement = statusElement;
@@ -118,24 +136,59 @@ class Ttt {
     }
 
     gameLoop() {
-                // Basic gravity: actually move the piece down if possible, and log
+        // Gravity and stacking with lock delay (now handles both gravity and soft drop)
         if (this.currentPiece && this.currentPiece.piece) {
             const now = Date.now();
+            if (!this.lockDelayStart) this.lockDelayStart = null;
+            // Gravity: move piece down if enough time has passed
             if (now - this.lastGravityTime >= this.gravityInterval) {
                 const newY = this.currentPiece.piece.y + 1;
                 const x = this.currentPiece.piece.x;
                 if (this.is_valid_move(this.board, this.currentPiece.piece, x, newY)) {
                     this.currentPiece.piece.y = newY;
                     this.clientPiece = this.currentPiece.piece;
-                } else {
-                    // Minimal lock logic: lock piece into board and remove it
-                    this.lock_piece(this.board, this.currentPiece.piece);
-                    this.currentPiece = null;
-                    this.clientPiece = null;
-                    // Do NOT spawn nextPiece here; wait for server update/start to provide the new piece
+                    this.lockDelayStart = null; // Reset lock delay if moved down
                 }
                 this.lastGravityTime = now;
             }
+            // Check if piece is grounded (cannot move down)
+            const grounded = !this.is_valid_move(this.board, this.currentPiece.piece, this.currentPiece.piece.x, this.currentPiece.piece.y + 1);
+            if (grounded) {
+                if (this.lockDelayStart === null) {
+                    this.lockDelayStart = now;
+                    console.log('[DEBUG] Piece grounded: lock delay started');
+                } else {
+                    console.log(`[DEBUG] Piece grounded: lock delay ${now - this.lockDelayStart}ms elapsed`);
+                }
+                if (now - this.lockDelayStart >= 500) { // 0.5s lock delay
+                    console.log('[DEBUG] Locking piece after delay (gameLoop)');
+                    this.lock_piece(this.board, this.currentPiece.piece);
+                    const cleared = this.clear_lines(this.board);
+                    this.board = cleared.board;
+                    // Inform server that the piece was locked
+                    this.sendMessage({ type: 'move', game_id: this.gameId, action: 'hard_drop' });
+                    console.log('[DEBUG] Piece locked, spawning nextPiece from client cache');
+                    if (this.nextPiece && this.nextPiece.piece) {
+                        const next = JSON.parse(JSON.stringify(this.nextPiece.piece));
+                        this.currentPiece = { piece: next };
+                        this.clientPiece = next;
+                        this.nextPiece = null;
+                    } else {
+                        this.currentPiece = null;
+                        this.clientPiece = null;
+                    }
+                    this.lockDelayStart = null;
+                    // Now spawn nextPiece from cache; do not wait for server
+                }
+            } else {
+                // Not grounded, reset lock delay
+                if (this.lockDelayStart !== null) {
+                    console.log('[DEBUG] Lock delay reset: piece not grounded');
+                }
+                this.lockDelayStart = null;
+            }
+        } else {
+            this.lockDelayStart = null;
         }
         // No snapping or interpolation to serverPiece; clientPiece is sovereign
 
@@ -210,6 +263,13 @@ class Ttt {
         for (let i = 0; i < lines_cleared; i++) {
             new_board.unshift(Array(10).fill(0));
         }
+        // Always return exactly 20 rows
+        while (new_board.length < 20) {
+            new_board.unshift(Array(10).fill(0));
+        }
+        while (new_board.length > 20) {
+            new_board.shift();
+        }
         return { board: new_board, lines_cleared: lines_cleared };
     }
 
@@ -225,6 +285,13 @@ class Ttt {
                 garbage_line[actual_hole_position] = 0;
                 board.shift(); // Remove top row
                 board.push(garbage_line); // Add to bottom
+            }
+            // Ensure board is always 20 rows
+            while (board.length < 20) {
+                board.unshift(Array(10).fill(0));
+            }
+            while (board.length > 20) {
+                board.shift();
             }
         }
     }
@@ -284,13 +351,22 @@ class Ttt {
     movePiece(dx, dy) {
         if (!this.clientPiece || !this.currentPiece) return;
         let newPiece = JSON.parse(JSON.stringify(this.clientPiece));
-        if (this.is_valid_move(this.board, newPiece, newPiece.x + dx, newPiece.y + dy)) {
+        const willMove = this.is_valid_move(this.board, newPiece, newPiece.x + dx, newPiece.y + dy);
+        if (willMove) {
             newPiece.x += dx;
             newPiece.y += dy;
             this.clientPiece = newPiece;
             this.currentPiece.piece = newPiece; // keep canonical state in sync
             this.sendMessage({ type: 'move', game_id: this.gameId, action: 'move', dx: dx, dy: dy });
+            // Reset lock delay if piece is moved off the ground
+            if (this.lockDelayStart !== null) {
+                if (this.is_valid_move(this.board, this.clientPiece, this.clientPiece.x, this.clientPiece.y + 1)) {
+                    console.log('[DEBUG] Lock delay reset: piece moved off ground');
+                    this.lockDelayStart = null;
+                }
+            }
         }
+        // No lock delay or locking here; handled in gameLoop
     }
 
     rotatePiece(clockwise) {
@@ -319,7 +395,14 @@ class Ttt {
         }
 
         if (moveSuccessful) {
+            this.currentPiece.piece = this.clientPiece;
             this.sendMessage({ type: 'move', game_id: this.gameId, action: clockwise ? 'rotate_right' : 'rotate_left' });
+            // Reset lock delay if piece is moved off the ground by rotation
+            if (this.lockDelayStart !== null) {
+                if (this.is_valid_move(this.board, this.clientPiece, this.clientPiece.x, this.clientPiece.y + 1)) {
+                    this.lockDelayStart = null;
+                }
+            }
         }
     }
 
@@ -332,6 +415,19 @@ class Ttt {
             newPiece.y += 1;
         }
         this.clientPiece = newPiece;
+        // Lock the piece and spawn the next one, just like gravity lock
+        this.lock_piece(this.board, this.clientPiece);
+        const cleared = this.clear_lines(this.board);
+        this.board = cleared.board;
+        if (this.nextPiece && this.nextPiece.piece) {
+            const next = JSON.parse(JSON.stringify(this.nextPiece.piece));
+            this.currentPiece = { piece: next };
+            this.clientPiece = next;
+            this.nextPiece = null;
+        } else {
+            this.currentPiece = null;
+            this.clientPiece = null;
+        }
         this.sendMessage({ type: 'move', game_id: this.gameId, action: 'hard_drop' });
     }
 
@@ -503,27 +599,51 @@ class Ttt {
 
     handleMessage(data) {
         switch (data.type) {
+                        case 'garbage':
+                            // Log and apply garbage lines as instructed by the server
+                            if (typeof data.lines === 'number' && data.lines > 0) {
+                                const hole = (typeof data.hole === 'number') ? data.hole : -1;
+                                console.log(`[GARBAGE] Received ${data.lines} line(s) from server. Hole position: ${hole}`);
+                                this.add_garbage_lines(this.board, data.lines, hole);
+                                this.ensureBoardHeight();
+                            }
+                            break;
             case 'start':
                 this.gameId = data.game_id;
                 this.player = data.player;
                 this.board = data.board;
                 this.serverBoard = data.board ? JSON.parse(JSON.stringify(data.board)) : null;
                 this.serverPiece = data.piece;
-                if (data.piece) {
+                if (data.piece && data.piece.name) {
+                    // Only use the piece type from the server, create a new piece locally
+                    const pieceType = data.piece.name;
+                    const newPiece = {
+                        name: pieceType,
+                        shape: PIECES[pieceType][0],
+                        x: 3,
+                        y: 0,
+                        rotation: 0
+                    };
                     this.currentPiece = {
-                        piece: JSON.parse(JSON.stringify(data.piece)),
+                        piece: newPiece,
                         piece_number: (typeof data.piece_number !== 'undefined') ? data.piece_number : 0
                     };
-                    this.clientPiece = this.currentPiece.piece; // for rendering
-                    console.log('[CurrentPiece][start]', this.currentPiece);
+                    this.clientPiece = this.currentPiece.piece;
                 }
-                if (typeof data.next_piece !== 'undefined' && typeof data.piece_number !== 'undefined') {
+                if (data.next_piece && data.next_piece.name && typeof data.piece_number !== 'undefined') {
+                    const nextType = data.next_piece.name;
+                    const nextPiece = {
+                        name: nextType,
+                        shape: PIECES[nextType][0],
+                        x: 3,
+                        y: 0,
+                        rotation: 0
+                    };
                     this.nextPiece = {
-                        piece: JSON.parse(JSON.stringify(data.next_piece)),
+                        piece: nextPiece,
                         piece_number: data.piece_number + 1
                     };
                     this.drawNextPiece(this.nextPiece.piece);
-                    console.log('[NextPiece][start]', this.nextPiece);
                 }
                 this.statusElement.textContent = '';
                 this.gameOver = false;
@@ -539,10 +659,7 @@ class Ttt {
                 }
                 break;
             case 'update':
-                this.isDropping = false;
-                this.inputDisabled = false; // Re-enable input on update
-
-
+                // Assign playerData and opponentData first
                 let playerData;
                 let opponentData = null;
                 if (data.player1 && data.player2) {
@@ -551,6 +668,31 @@ class Ttt {
                 } else {
                     playerData = data;
                 }
+                // Update gravity interval based on level
+                if (playerData && typeof playerData.level === 'number') {
+                    const levelIdx = Math.min(playerData.level, LEVEL_FRAMES.length - 1);
+                    this.gravityInterval = LEVEL_FRAMES[levelIdx] * (1000 / 60);
+                }
+                // Defer garbage application until after any board replacement (e.g., after line clears)
+                let pendingGarbage = 0;
+                let pendingGarbageHole = -1;
+                if (playerData && typeof playerData.garbage === 'number' && playerData.garbage > 0) {
+                    pendingGarbage = playerData.garbage;
+                    pendingGarbageHole = (typeof playerData.garbage_hole === 'number') ? playerData.garbage_hole : -1;
+                    playerData.garbage = 0;
+                }
+                // ...existing code...
+                // At the end of the update block, after all possible board replacements:
+                if (pendingGarbage > 0) {
+                    console.log(`[GARBAGE] Received ${pendingGarbage} line(s) from server. Hole position: ${pendingGarbageHole}`);
+                    this.add_garbage_lines(this.board, pendingGarbage, pendingGarbageHole);
+                    this.ensureBoardHeight();
+                }
+                this.isDropping = false;
+                this.inputDisabled = false; // Re-enable input on update
+
+
+                // (declaration moved above, do not redeclare)
                 // Print and render opponent mini map if available
                 if (opponentData && opponentData.board) {
                     // Render as a grid of divs
@@ -567,25 +709,26 @@ class Ttt {
                         this.opponentMiniMapElement.innerHTML = html;
                     }
                 }
-                // Always set currentPiece from the piece field in the update message
-                if (playerData && playerData.piece) {
-                    this.currentPiece = {
-                        piece: JSON.parse(JSON.stringify(playerData.piece)),
-                        piece_number: playerData.piece_number
-                    };
-                    this.clientPiece = this.currentPiece.piece; // for rendering
-                }
+                // (Removed: never overwrite currentPiece/clientPiece from server on update)
                 // Only use next_piece for preview
-                if (playerData && playerData.next_piece) {
+                if (playerData && playerData.next_piece && playerData.next_piece.name) {
+                    const nextType = playerData.next_piece.name;
+                    const nextPiece = {
+                        name: nextType,
+                        shape: PIECES[nextType][0],
+                        x: 3,
+                        y: 0,
+                        rotation: 0
+                    };
                     this.nextPiece = {
-                        piece: JSON.parse(JSON.stringify(playerData.next_piece)),
+                        piece: nextPiece,
                         piece_number: playerData.piece_number + 1
                     };
                     this.drawNextPiece(this.nextPiece.piece);
                 }
 
                 if (playerData) {
-                    this.board = playerData.board;
+                    // Only update serverBoard for debug overlay, never overwrite local board
                     this.serverBoard = playerData.board ? JSON.parse(JSON.stringify(playerData.board)) : null;
                     this.serverPiece = playerData.piece;
                     // No longer set clientPiece from serverPiece; client is sovereign
