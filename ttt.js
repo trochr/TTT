@@ -616,7 +616,7 @@ class Ttt {
                         name: pieceType,
                         shape: PIECES[pieceType][0],
                         x: 3,
-                        y: 0,
+                        y: -1,
                         rotation: 0
                     };
                     this.currentPiece = {
@@ -631,7 +631,7 @@ class Ttt {
                         name: nextType,
                         shape: PIECES[nextType][0],
                         x: 3,
-                        y: 0,
+                        y: -1,
                         rotation: 0
                     };
                     this.nextPiece = {
@@ -712,7 +712,7 @@ class Ttt {
                         name: nextType,
                         shape: PIECES[nextType][0],
                         x: 3,
-                        y: 0,
+                        y: -1,
                         rotation: 0
                     };
                     this.nextPiece = {
