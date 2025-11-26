@@ -22,9 +22,6 @@
         <div id="theme-name-display"></div>
     </div>
     <div id="menu">
-        <select id="gameType">
-            <option value="ttt">TTT</option>
-        </select>
         <button id="hostButton">Host Game</button>
         <div id="hostInfo">
             <p>Share this URL with your opponent:</p>
@@ -47,13 +44,12 @@
             <div id="board"></div>
             <button id="restart">Restart Game</button>
         </div>
-        <div id="side-panel">
-            <div id="nextPiecePreview"></div> <!-- Moved to top of side-panel -->
-            <div id="score-player1">Player 1: 0</div>
-            <div id="score-player2">Player 2: 0</div>
-            <div id="opponent-mini-map" style="margin-top:16px;"></div>
-        </div>
-    </div>
+                                <div id="side-panel">
+                                    <div id="nextPiecePreview"></div> <!-- Moved to top of side-panel -->
+                                    <div id="score-player1">Player 1: 0</div>
+                                    <div id="score-player2">Player 2: 0</div>
+                                    <div id="opponent-mini-map" style="margin-top:16px;"></div>
+                                </div>    </div>
 
     <script src="websocket_config.js"></script>
     <script src="client.js"></script>

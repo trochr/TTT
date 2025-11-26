@@ -110,10 +110,11 @@ class Ttt {
         this.nextPiecePreviewElement = document.getElementById('nextPiecePreview');
         this.scorePlayer1Element = document.getElementById('score-player1');
         this.scorePlayer2Element = document.getElementById('score-player2');
-        this.linesPlayer1Element = document.getElementById('lines-player1');
-        this.linesPlayer2Element = document.getElementById('lines-player2');
-        this.levelPlayer1Element = document.getElementById('level-player1');
-        this.levelPlayer2Element = document.getElementById('level-player2');
+        this.player1Score = 0;
+        this.player2Score = 0;
+        this.gameStartTime = null;
+        this.player1Pieces = 0;
+        this.player2Pieces = 0;
         this.inputDisabled = false;
         this.nextPiece = null; // Track the next piece for client-side spawning
         this.opponentMiniMapElement = document.getElementById('opponent-mini-map');
@@ -238,7 +239,12 @@ class Ttt {
         piece.shape.forEach((row, r) => {
             row.forEach((cell, c) => {
                 if (cell) {
-                    board[piece.y + r][piece.x + c] = piece.name;
+                    const boardY = piece.y + r;
+                    const boardX = piece.x + c;
+                    // Only lock the piece if it's within the board boundaries
+                    if (boardY >= 0 && boardY < 20 && boardX >= 0 && boardX < 10) {
+                        board[boardY][boardX] = piece.name;
+                    }
                 }
             });
         });
@@ -746,6 +752,7 @@ class Ttt {
                             this.scorePlayer1Element.textContent = `Player 1: ${data.player1.score}`;
                             this.scorePlayer1Element.style.color = '';
                             this.scorePlayer1Element.style.textDecoration = '';
+                            this.player1Score = data.player1.score; // Update stored score
                         }
 
                         if (data.player2.finished) {
@@ -756,7 +763,10 @@ class Ttt {
                             this.scorePlayer2Element.textContent = `Player 2: ${data.player2.score}`;
                             this.scorePlayer2Element.style.color = '';
                             this.scorePlayer2Element.style.textDecoration = '';
+                            this.player2Score = data.player2.score; // Update stored score
                         }
+                        this.player1Pieces = data.player1.piece_number; // Update stored pieces
+                        this.player2Pieces = data.player2.piece_number; // Update stored pieces
 
                         this.prevPlayer1Finished = data.player1.finished;
                         this.prevPlayer2Finished = data.player2.finished;
@@ -764,11 +774,31 @@ class Ttt {
                 }
                 break;
             case 'game_over':
+                console.log('Game Stats:', data.stats);
                 this.gameOver = true;
                 if (data.winner === this.player) {
                     this.statusElement.textContent = 'You win!';
+                    console.log(`[${new Date().toISOString()}] Game Over! You win!`);
                 } else {
                     this.statusElement.textContent = 'You lose!';
+                    console.log(`[${new Date().toISOString()}] Game Over! You lose!`);
+                }
+                console.log(`[${new Date().toISOString()}] Player 1 - Score: ${this.player1Score}`);
+                console.log(`[${new Date().toISOString()}] Player 2 - Score: ${this.player2Score}`);
+
+                if (this.gameStartTime) {
+                    const gameDurationSeconds = (Date.now() - this.gameStartTime) / 1000;
+                    console.log(`[${new Date().toISOString()}] Game Duration: ${gameDurationSeconds.toFixed(2)} seconds`);
+
+                    if (this.player1Pieces > 0) {
+                        const player1PPS = this.player1Pieces / gameDurationSeconds;
+                        console.log(`[${new Date().toISOString()}] Player 1 - Pieces Per Second (PPS): ${player1PPS.toFixed(2)}`);
+                    }
+                    if (this.player2Pieces > 0) {
+                        const player2PPS = this.player2Pieces / gameDurationSeconds;
+                        console.log(`[${new Date().toISOString()}] Player 2 - Pieces Per Second (PPS): ${player2PPS.toFixed(2)}`);
+                    }
+                    console.log(`[${new Date().toISOString()}] Note: Actions Per Minute (APM) cannot be computed as the server does not provide action count data.`);
                 }
                 break;
             case 'restart':
@@ -783,6 +813,8 @@ class Ttt {
                 this.linesPlayer2Element.textContent = 'Lines: 0';
                 this.levelPlayer1Element.textContent = 'Level: 0';
                 this.levelPlayer2Element.textContent = 'Level: 0';
+                this.gameStartTime = Date.now(); // Record game start time
+                // Initial draw of next piece
                 break;
         }
     }

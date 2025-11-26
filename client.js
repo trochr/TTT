@@ -10,7 +10,6 @@ const joinInfo = document.getElementById('joinInfo');
 const gameIdInput = document.getElementById('gameIdInput');
 const joinGameButton = document.getElementById('joinGameButton');
 const qrcodeElement = document.getElementById('qrcode');
-const gameTypeSelect = document.getElementById('gameType');
 const themeToggleContainer = document.getElementById('theme-toggle-container');
 const themeIcon = document.getElementById('theme-icon');
 console.log('themeToggleContainer:', themeToggleContainer);
@@ -286,7 +285,7 @@ function sendMessage(message) {
 
 hostButton.addEventListener('click', () => {
     console.log('Host game button clicked. WebSocket readyState:', ws.readyState, WebSocket.OPEN);
-    const gameType = gameTypeSelect.value;
+    const gameType = 'ttt';
     try {
         ws.send(JSON.stringify({ type: 'host', game_type: gameType }));
         console.log('Host message sent successfully.');
