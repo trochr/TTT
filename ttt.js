@@ -119,6 +119,13 @@ class Ttt {
         this.nextPiece = null; // Track the next piece for client-side spawning
         this.opponentMiniMapElement = document.getElementById('opponent-mini-map');
 
+        // New UI elements for game over and stats
+        this.gameOverMessageElement = document.getElementById('gameOverMessage');
+        this.playAgainButtonElement = document.getElementById('playAgainButton');
+        this.gameStatsDisplayElement = document.getElementById('gameStatsDisplay');
+        this.player1StatsElement = document.getElementById('player1Stats');
+        this.player2StatsElement = document.getElementById('player2Stats');
+
         // Input handling properties
         this.keyStates = {};
         this.dasDelay = 180; // ms
@@ -774,15 +781,63 @@ class Ttt {
                 }
                 break;
             case 'game_over':
-                console.log('Game Stats:', data.stats);
+                const gameStats = data.stats;
                 this.gameOver = true;
-                if (data.winner === this.player) {
-                    this.statusElement.textContent = 'You win!';
-                    console.log(`[${new Date().toISOString()}] Game Over! You win!`);
-                } else {
-                    this.statusElement.textContent = 'You lose!';
-                    console.log(`[${new Date().toISOString()}] Game Over! You lose!`);
+
+                const localPlayerId = localStorage.getItem('playerId');
+                let localPlayerRole = null;
+
+                if (gameStats.player1 && gameStats.player1.id === localPlayerId) {
+                    localPlayerRole = 'player1';
+                } else if (gameStats.player2 && gameStats.player2.id === localPlayerId) {
+                    localPlayerRole = 'player2';
                 }
+
+                // Set game over message
+                if (localPlayerRole && gameStats.winner === localPlayerRole) {
+                    this.gameOverMessageElement.textContent = 'You win!';
+                } else {
+                    this.gameOverMessageElement.textContent = 'You lose!';
+                }
+                
+                // Clear the main status element to prevent overlap
+                this.statusElement.textContent = '';
+                
+                // Populate player stats
+                if (gameStats.player1 && this.player1StatsElement) {
+                    this.player1StatsElement.innerHTML = `
+                        <strong>Player 1 (${gameStats.player1.id}):</strong><br>
+                        Score: ${gameStats.player1.score}<br>
+                        Lines: ${gameStats.player1.lines}<br>
+                        APM: ${gameStats.player1.apm ? gameStats.player1.apm.toFixed(2) : 'N/A'}<br>
+                        PPS: ${gameStats.player1.pps ? gameStats.player1.pps.toFixed(2) : 'N/A'}
+                    `;
+                }
+                if (gameStats.player2 && this.player2StatsElement) {
+                    this.player2StatsElement.innerHTML = `
+                        <strong>Player 2 (${gameStats.player2.id}):</strong><br>
+                        Score: ${gameStats.player2.score}<br>
+                        Lines: ${gameStats.player2.lines}<br>
+                        APM: ${gameStats.player2.apm ? gameStats.player2.apm.toFixed(2) : 'N/A'}<br>
+                        PPS: ${gameStats.player2.pps ? gameStats.player2.pps.toFixed(2) : 'N/A'}
+                    `;
+                }
+
+                // Display stats
+                if (this.gameStatsDisplayElement) {
+                    this.gameStatsDisplayElement.style.setProperty('display', 'flex', 'important'); // ADDED !important
+                }
+
+                // Add event listener to play again button
+                if (this.playAgainButtonElement && !this.playAgainButtonElement.listenerAdded) {
+                    this.playAgainButtonElement.addEventListener('click', () => {
+                        this.sendMessage({ type: 'restart', game_id: this.gameId });
+                        // Hide stats immediately on click
+                        if (this.gameStatsDisplayElement) this.gameStatsDisplayElement.style.display = 'none';
+                    });
+                    this.playAgainButtonElement.listenerAdded = true; // Prevent adding multiple listeners
+                }
+
                 console.log(`[${new Date().toISOString()}] Player 1 - Score: ${this.player1Score}`);
                 console.log(`[${new Date().toISOString()}] Player 2 - Score: ${this.player2Score}`);
 
@@ -802,6 +857,10 @@ class Ttt {
                 }
                 break;
             case 'restart':
+                // Hide stats element
+                if (this.gameStatsDisplayElement) {
+                    this.gameStatsDisplayElement.style.display = 'none';
+                }
                 this.statusElement.textContent = '';
                 this.gameOver = false;
                 this.toppedOut = false;

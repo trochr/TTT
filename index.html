@@ -39,17 +39,27 @@
         </div>
     </div>
     <div id="game">
-        <div id="board-container">
-            <div id="status">Waiting for opponent...</div>
-            <div id="board"></div>
-            <button id="restart">Restart Game</button>
-        </div>
-                                <div id="side-panel">
-                                    <div id="nextPiecePreview"></div> <!-- Moved to top of side-panel -->
-                                    <div id="score-player1">Player 1: 0</div>
-                                    <div id="score-player2">Player 2: 0</div>
-                                    <div id="opponent-mini-map" style="margin-top:16px;"></div>
-                                </div>    </div>
+                    <div id="board-container">
+                <div id="status">Waiting for opponent...</div>
+                            <div id="board">
+                            </div>
+                            <!-- Game Stats Display -->
+                            <div id="gameStatsDisplay">
+                                <h2>Game Over!</h2>
+                                <p id="gameOverMessage"></p>
+                                <h3>Game Stats</h3>
+                                <div id="player1Stats"></div>
+                                <div id="player2Stats"></div>
+                                <button id="playAgainButton">Play Again</button>
+                            </div>
+                            <button id="restart">Restart Game</button>
+            </div> <!-- End of board-container -->
+            <div id="side-panel">
+                <div id="nextPiecePreview"></div> <!-- Moved to top of side-panel -->
+                <div id="score-player1">Player 1: 0</div>
+                <div id="score-player2">Player 2: 0</div>
+                <div id="opponent-mini-map" style="margin-top:16px;"></div>
+            </div>
 
     <script src="websocket_config.js"></script>
     <script src="client.js"></script>

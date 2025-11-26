@@ -946,15 +946,19 @@ body {
     display: none;
     flex-direction: row;
     align-items: flex-start;
-    gap: 40px;
+    gap: 10px;
     text-align: center;
+    flex-wrap: nowrap; /* Prevent wrapping of children */
+    min-width: 509px; /* Force minimum width to prevent wrapping */
 }
 
 #board-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    width: 269px; /* ADDED to constrain width */
+    position: relative; /* ADDED for absolute positioning of children */
+    flex-shrink: 0; /* Prevent shrinking */
 }
 
 #board {
@@ -973,14 +977,17 @@ body {
 
 #side-panel {
     display: flex;
-    translate: -36px 55px;
     flex-direction: column;
     gap: 15px;
     width: 200px;
+    height: 504px;
     padding: 10px;
     border: 2px solid var(--border-color);
     border-radius: 5px;
     background-color: var(--panel-bg);
+    flex-shrink: 0; /* Prevent shrinking */
+    align-self: flex-end; /* Changed to flex-end for better vertical alignment */
+    transform: translate(-5px, 0px);
 }
 
 #side-panel > div {
@@ -1185,6 +1192,8 @@ body {
     grid-gap: 1px;
     background-color: var(--board-bg-ttt);
     border: 5px solid var(--border-color);
+    position: relative; /* ADDED */
+    overflow: hidden; /* ADDED for debugging */
 }
 
 .ttt .cell {
@@ -1293,4 +1302,84 @@ body {
 
 .ttt .cell.filled-G {
     background-color: var(--piece-color-G, #808080); /* Gray */
+}
+
+/* Game Stats Display */
+#gameStatsDisplay {
+    position: absolute;
+    top: 45px;
+    left: 5px;
+    width: 258px;
+    height: 519px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: none;
+    border-radius: 0;
+    padding: 5px; /* Adjusted padding for better fit within board */
+    color: var(--text-color);
+    z-index: 100;
+            font-size: 1.2em; /* Adjusted base font size */    box-shadow: none;
+    display: none; /* ADDED: Hide by default via CSS */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 2px; /* Adjusted gap */
+    box-sizing: border-box;
+}
+
+#gameStatsDisplay h2 {
+    font-size: 1.5em; /* Adjusted size */
+    margin-bottom: 2px;
+    color: var(--text-color);
+}
+
+#gameStatsDisplay p#gameOverMessage {
+    font-size: 1.1em; /* Adjusted size */
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+
+#gameStatsDisplay h3 {
+    font-size: 1em; /* Adjusted size */
+    margin-bottom: 2px;
+    text-align: center;
+    color: var(--text-color);
+}
+
+#gameStatsDisplay button {
+    padding: 4px 8px; /* Smaller button */
+    font-size: 1em;
+    cursor: pointer;
+    background-color: var(--button-primary);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    margin-top: 4px;
+}
+
+#gameStatsDisplay button:hover {
+    background-color: var(--button-primary-hover);
+}
+
+#player1Stats, #player2Stats {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 2px; /* Reduced padding */
+    border-radius: 2px;
+    line-height: 1.1; /* Adjusted line height */
+    text-align: left;
+    width: 90%;
+    margin: 0 auto;
+    font-size: 0.9em; /* Adjusted font size */
+}
+
+#player1Stats strong, #player2Stats strong {
+    color: var(--button-primary); /* Highlight player names */
+}
+
+/* Adjust the margin-top for the board itself */
+#board {
+    display: grid;
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
