@@ -834,7 +834,7 @@ class Ttt {
                         // Hide stats immediately on click
                         if (this.gameStatsDisplayElement) this.gameStatsDisplayElement.style.display = 'none';
                         // Show main menu and hide game board
-                        document.getElementById('menu').style.display = 'flex';
+                        document.getElementById('menu').style.display = 'block';
                         document.getElementById('game').style.display = 'none';
                     });
                     this.playAgainButtonElement.listenerAdded = true; // Prevent adding multiple listeners
