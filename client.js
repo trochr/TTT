@@ -17,6 +17,7 @@ const aestheticToggleContainer = document.getElementById('aesthetic-toggle-conta
 console.log('aestheticToggleContainer:', aestheticToggleContainer);
 const aestheticIcon = document.getElementById('aesthetic-icon'); // New icon for aesthetic toggle
 const themeNameDisplay = document.getElementById('theme-name-display'); // For displaying theme name
+const networkWarningElement = document.getElementById('network-warning'); // New element for network warning
 
 const BASE_THEME_MODES = ['dark', 'light', 'auto'];
 const AESTHETIC_THEMES = [
@@ -160,6 +161,16 @@ let game = null;
 // Check if playerId exists in local storage
 let playerId = localStorage.getItem('playerId');
 
+// Function to handle network latency warnings
+function handleNetworkLatency(average_rtt) {
+    if (average_rtt > 100) { // Threshold for poor connection
+        networkWarningElement.textContent = `Poor network connection detected! RTT: ${average_rtt}ms`;
+        networkWarningElement.style.display = 'block';
+    } else {
+        networkWarningElement.style.display = 'none';
+    }
+}
+
 function initializeWebSocket(socket) {
     socket.onopen = () => {
         console.log('WebSocket connection opened');
@@ -226,7 +237,10 @@ function initializeWebSocket(socket) {
                 // Fallback if game is not yet initialized
                 alert(data.message);
             }
-        } else {
+        } else if (data.type === 'network_latency') {
+            handleNetworkLatency(data.average_rtt);
+        }
+        else {
             // Delegate game-specific messages to the game module
             if (data.type === 'start') {
                 document.getElementById('menu').style.display = 'none';
@@ -257,6 +271,7 @@ function initializeWebSocket(socket) {
         connectionStatusElement.textContent = 'Connection lost. Reconnecting...';
         connectionStatusElement.style.color = 'red';
         console.log('connectionStatusElement updated: Connection lost');
+        networkWarningElement.style.display = 'none'; // Hide network warning on close
         attemptReconnect();
         console.trace('WebSocket onclose stack trace');
     };
@@ -266,6 +281,7 @@ function initializeWebSocket(socket) {
         connectionStatusElement.textContent = 'Connection error';
         connectionStatusElement.style.color = 'red';
         console.log('connectionStatusElement updated: Connection error');
+        networkWarningElement.style.display = 'none'; // Hide network warning on error
         console.trace('WebSocket onerror stack trace');
     };
 }
