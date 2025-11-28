@@ -1307,10 +1307,10 @@ body {
 /* Game Stats Display */
 #gameStatsDisplay {
     position: absolute;
-    top: 45px;
+    top: 44px;
     left: 5px;
     width: 259px;
-    height: 519px;
+    height: 520px;
     background-color: rgba(0, 0, 0, 0.8);
     border: none;
     border-radius: 0;
@@ -1356,6 +1356,7 @@ body {
     border-radius: 5px;
     transition: background-color 0.3s;
     margin-top: 4px;
+    font-family: 'Orbitron', sans-serif;
 }
 
 #gameStatsDisplay button:hover {
@@ -1382,4 +1383,17 @@ body {
     display: grid;
     border-radius: 5px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Specific styling for Light Monochrome theme splash screen */
+html.theme-monochrome-classic.theme-base-light #gameStatsDisplay {
+    color: white;
+}
+
+html.theme-monochrome-classic.theme-base-light #gameStatsDisplay h2,
+html.theme-monochrome-classic.theme-base-light #gameStatsDisplay p#gameOverMessage,
+html.theme-monochrome-classic.theme-base-light #gameStatsDisplay h3,
+html.theme-monochrome-classic.theme-base-light #gameStatsDisplay #player1Stats strong,
+html.theme-monochrome-classic.theme-base-light #gameStatsDisplay #player2Stats strong {
+    color: white;
 }

@@ -307,10 +307,9 @@ class Ttt {
     handleKeyDown(event) {
         if (this.gameOver || this.toppedOut || !this.gameId || this.inputDisabled) {
             if (event.key === 'Enter') {
-                this.sendMessage({ type: 'restart', game_id: this.gameId });
-                this.statusElement.textContent = '';
-                this.gameOver = false;
-                this.toppedOut = false;
+                if (this.playAgainButtonElement) {
+                    this.playAgainButtonElement.click();
+                }
             }
             return;
         }
@@ -834,6 +833,9 @@ class Ttt {
                         this.sendMessage({ type: 'restart', game_id: this.gameId });
                         // Hide stats immediately on click
                         if (this.gameStatsDisplayElement) this.gameStatsDisplayElement.style.display = 'none';
+                        // Show main menu and hide game board
+                        document.getElementById('menu').style.display = 'flex';
+                        document.getElementById('game').style.display = 'none';
                     });
                     this.playAgainButtonElement.listenerAdded = true; // Prevent adding multiple listeners
                 }
