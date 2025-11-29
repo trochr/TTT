@@ -20,6 +20,10 @@
 .opponent-mini-board-cell.filled {
     background: #aaa;
 }
+
+.opponent-mini-board.topped-out .opponent-mini-board-cell.filled {
+    background-color: red;
+}
 /* Server state silhouette overlay */
 .server-silhouette {
     outline: 2px solid #6f6;
