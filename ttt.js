@@ -141,9 +141,22 @@ class Ttt {
 
         // Interpolation properties
         this.interpolationFactor = 0.3; // 30% interpolation per frame
+        
+        this._handleKeyDown = this.handleKeyDown.bind(this);
+        this._handleKeyUp = this.handleKeyUp.bind(this);
 
         this._initializeBoard();
         this.gameLoop(); // Start the game loop
+    }
+
+    enableInput() {
+        document.addEventListener('keydown', this._handleKeyDown);
+        document.addEventListener('keyup', this._handleKeyUp);
+    }
+
+    disableInput() {
+        document.removeEventListener('keydown', this._handleKeyDown);
+        document.removeEventListener('keyup', this._handleKeyUp);
     }
 
     gameLoop() {
@@ -217,8 +230,8 @@ class Ttt {
             }
         }
 
-        document.addEventListener('keydown', (e) => this.handleKeyDown(e));
-        document.addEventListener('keyup', (e) => this.handleKeyUp(e));
+        // Removed: document.addEventListener('keydown', (e) => this.handleKeyDown(e));
+        // Removed: document.addEventListener('keyup', (e) => this.handleKeyUp(e));
     }
 
     is_valid_move(board, piece, x, y) {
@@ -310,11 +323,13 @@ class Ttt {
     handleKeyDown(event) {
         if (this.gameOver || this.toppedOut || !this.gameId || this.inputDisabled) {
             if (event.key === 'Enter') {
-                if (this.playAgainButtonElement) {
+                if (this.playAgainButtonElement && this.gameStatsDisplayElement.style.display !== 'none') {
                     this.playAgainButtonElement.click();
+                    event.preventDefault(); // Prevent default action of Enter key
+                    event.stopPropagation(); // Stop propagation of Enter key
                 }
             }
-            return;
+            // Removed 'return;' here to allow event propagation if Enter key was not explicitly handled.
         }
 
         if (this.keyStates[event.key]) return; // Prevent auto-repeat from re-triggering initial actions
@@ -687,6 +702,7 @@ class Ttt {
                 if (data.next_piece) {
                     this.drawNextPiece(data.next_piece);
                 }
+                this.enableInput(); // Enable input when game starts
                 break;
             case 'update':
                 // Assign playerData and opponentData first
@@ -881,6 +897,7 @@ class Ttt {
                     }
                     console.log(`[${new Date().toISOString()}] Note: Actions Per Minute (APM) cannot be computed as the server does not provide action count data.`);
                 }
+                this.disableInput(); // Disable input when game ends
                 break;
             case 'restart':
                 // Hide stats element

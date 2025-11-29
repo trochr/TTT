@@ -10,6 +10,7 @@ const joinInfo = document.getElementById('joinInfo');
 const gameIdInput = document.getElementById('gameIdInput');
 const joinGameButton = document.getElementById('joinGameButton');
 const qrcodeElement = document.getElementById('qrcode');
+const playAgainButton = document.getElementById('playAgainButton'); // Added playAgainButton
 const themeToggleContainer = document.getElementById('theme-toggle-container');
 const themeIcon = document.getElementById('theme-icon');
 console.log('themeToggleContainer:', themeToggleContainer);
@@ -101,24 +102,8 @@ function showThemeName(name) {
     if (!themeNameDisplay) return; // Exit if element doesn't exist
 
     themeNameDisplay.textContent = name;
-    themeNameDisplay.style.display = 'block'; // Make it block to enable transitions
-    // Force reflow to ensure display:block applies before opacity transition
-    themeNameDisplay.offsetHeight; 
-    themeNameDisplay.style.opacity = '1';
-
-    if (themeNameDisplay.hideTimeout) {
-        clearTimeout(themeNameDisplay.hideTimeout);
-    }
-    if (themeNameDisplay.displayNoneTimeout) {
-        clearTimeout(themeNameDisplay.displayNoneTimeout);
-    }
-
-    themeNameDisplay.hideTimeout = setTimeout(() => {
-        themeNameDisplay.style.opacity = '0';
-        themeNameDisplay.displayNoneTimeout = setTimeout(() => {
-            themeNameDisplay.style.display = 'none';
-        }, 500); // Should match CSS transition duration
-    }, 2500); // Display for 2.5 seconds before fading
+    // The display will be handled by CSS based on parent hover
+    // No explicit opacity setting here, relying on CSS.
 }
 
 
@@ -323,6 +308,17 @@ joinGameButton.addEventListener('click', () => {
     }
 });
 
+restartButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    returnToMenuAndFocusHost();
+});
+playAgainButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    returnToMenuAndFocusHost();
+});
+
 const copyButton = document.getElementById('copyButton');
 
 copyButton.addEventListener('click', () => {
@@ -371,6 +367,25 @@ function adjustTextAreaWidth(url) {
     gameUrl.style.width = `${width}px`;
 }
 
+// Function to return to the menu state and focus the host button
+function returnToMenuAndFocusHost() {
+    document.getElementById('menu').style.display = 'block';
+    document.getElementById('game').style.display = 'none';
+    document.getElementById('gameStatsDisplay').style.display = 'none'; // Ensure game stats are hidden
+    hostInfo.style.display = 'none'; // Also hide host/join info
+    joinInfo.style.display = 'none';
+
+    // Attempt to blur any currently focused element
+    if (document.activeElement) {
+        document.activeElement.blur();
+    }
+
+    // Try focusing with a slight delay to avoid immediate activation
+    setTimeout(() => {
+        hostButton.focus();
+    }, 50); // Small delay, e.g., 50ms
+}
+
 function connect() {
     console.log('Attempting to connect to WebSocket...');
     // Only create a new WebSocket if one doesn't already exist or the previous one is closed
@@ -398,3 +413,5 @@ setTimeout(() => {
         topRightControls.classList.add('controls-hidden-by-js');
     }
 }, 5000);
+
+returnToMenuAndFocusHost();

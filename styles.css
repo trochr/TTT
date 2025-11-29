@@ -895,6 +895,11 @@ body {
     opacity: 1;
 }
 
+#top-right-hotspot:hover #theme-name-display {
+    opacity: 1;
+    visibility: visible;
+}
+
 #theme-toggle-container {
     cursor: pointer;
 }
@@ -921,15 +926,53 @@ body {
     fill: var(--button-primary);
 }
 
+/* GitHub link container styles */
+#github-link-container {
+    cursor: pointer;
+}
+
+#github-link-container a {
+    text-decoration: none; /* Remove underline from the link */
+}
+
+#github-link-container svg {
+    width: 28px; /* Adjust size as needed */
+    height: 28px; /* Adjust size as needed */
+    transition: fill 0.3s ease-in-out;
+}
+
+/* GitHub logo color based on base theme */
+html.theme-base-light #github-link-container svg {
+    fill: black;
+}
+
+html.theme-base-dark #github-link-container svg {
+    fill: white;
+}
+
+#github-link-container:hover svg {
+    fill: var(--button-primary);
+}
+
+#github-link .lucide-github {
+    fill: var(--text-color);
+}
+
+#github-link:hover .lucide-github {
+    fill: var(--button-primary);
+}
+
+
+
 #theme-name-display {
     background-color: rgba(0, 0, 0, 0.7);
     color: white;
     padding: 8px 15px;
     border-radius: 5px;
     font-size: 1.2em;
-    opacity: 0;
-    transition: opacity 0.5s ease-in-out;
-    z-index: 1002; /* Above all other controls */
+    visibility: hidden; /* Use visibility for more definitive hiding */
+    opacity: 0; /* Keep opacity for transition effect */
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
     pointer-events: none; /* Allows clicks to pass through */
     margin-top: 10px; /* Space from controls */
     margin-right: 10px; /* Align with controls */
