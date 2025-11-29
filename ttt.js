@@ -727,7 +727,8 @@ class Ttt {
                 if (opponentData && opponentData.board) {
                     // Render as a grid of divs
                     if (this.opponentMiniMapElement) {
-                        let html = '<div class="opponent-mini-board">';
+                        const toppedOutClass = opponentData.finished ? ' topped-out' : '';
+                        let html = `<div class="opponent-mini-board${toppedOutClass}">`;
                         for (let r = 0; r < opponentData.board.length; r++) {
                             html += '<div class="opponent-mini-board-row">';
                             for (let c = 0; c < opponentData.board[r].length; c++) {
