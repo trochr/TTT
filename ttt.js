@@ -118,6 +118,9 @@ class Ttt {
         this.inputDisabled = false;
         this.nextPiece = null; // Track the next piece for client-side spawning
         this.opponentMiniMapElement = document.getElementById('opponent-mini-map');
+        this._debugSilhouetteActive = window.location.hash === '#DEBUG_SILOUHETTE'; // New: Debug silhouette state
+        this._lastEscapePressTime = 0; // New: For double-press detection
+        this._escapePressCount = 0; // New: For double-press detection
 
         // New UI elements for game over and stats
         this.gameOverMessageElement = document.getElementById('gameOverMessage');
@@ -318,6 +321,26 @@ class Ttt {
         this.keyStates[event.key] = true;
 
         switch (event.key) {
+            case 'Escape':
+                const now = Date.now();
+                const DOUBLE_PRESS_DELAY = 300; // milliseconds
+                if (now - this._lastEscapePressTime < DOUBLE_PRESS_DELAY) {
+                    this._escapePressCount++;
+                    if (this._escapePressCount === 1) { // This is the second press
+                        this._debugSilhouetteActive = !this._debugSilhouetteActive;
+                        if (this._debugSilhouetteActive) {
+                            window.location.hash = '#DEBUG_SILOUHETTE';
+                            console.log('Debug Silhouette: ON');
+                        } else {
+                            window.location.hash = '';
+                            console.log('Debug Silhouette: OFF');
+                        }
+                    }
+                } else {
+                    this._escapePressCount = 0;
+                }
+                this._lastEscapePressTime = now;
+                break;
             case 'ArrowLeft':
             case 'ArrowRight':
                 const direction = (event.key === 'ArrowLeft') ? -1 : 1;
@@ -482,8 +505,8 @@ class Ttt {
             });
         });
 
-        // 1b. Overlay server board as silhouette (if available and #DEBUG_SILOUHETTE in URL)
-        if (this.serverBoard && window.location.hash === '#DEBUG_SILOUHETTE') {
+        // 1b. Overlay server board as silhouette (if available and debug silhouette is active)
+        if (this.serverBoard && this._debugSilhouetteActive) {
             this.serverBoard.forEach((row, r) => {
                 row.forEach((cell, c) => {
                     if (cell) {
@@ -537,8 +560,8 @@ class Ttt {
             });
         }
 
-        // 4. Overlay server falling piece as silhouette (only if #DEBUG_SILOUHETTE in URL)
-        if (this.serverPiece && this.serverPiece.shape && window.location.hash === '#DEBUG_SILOUHETTE') {
+        // 4. Overlay server falling piece as silhouette (only if debug silhouette is active)
+        if (this.serverPiece && this.serverPiece.shape && this._debugSilhouetteActive) {
             const pieceName = this.serverPiece.name;
             this.serverPiece.shape.forEach((row, r) => {
                 row.forEach((cell, c) => {
