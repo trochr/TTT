@@ -866,6 +866,13 @@ class Ttt {
                 if (this.gameStatsDisplayElement) {
                     this.gameStatsDisplayElement.style.setProperty('display', 'flex', 'important'); // ADDED !important
                 }
+                // Focus the Play Again button for accessibility, after display is set
+                if (this.playAgainButtonElement) {
+                    // Use setTimeout to ensure the button is visible before focusing
+                    setTimeout(() => {
+                        this.playAgainButtonElement.focus();
+                    }, 0);
+                }
 
                 // Add event listener to play again button
                 if (this.playAgainButtonElement && !this.playAgainButtonElement.listenerAdded) {
