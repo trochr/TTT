@@ -880,6 +880,8 @@ class Ttt {
                         this.sendMessage({ type: 'restart', game_id: this.gameId });
                         // Hide stats immediately on click
                         if (this.gameStatsDisplayElement) this.gameStatsDisplayElement.style.display = 'none';
+                        // Clear opponent mini board preview
+                        if (this.opponentMiniMapElement) this.opponentMiniMapElement.innerHTML = '';
                         // Show main menu and hide game board
                         document.getElementById('menu').style.display = 'block';
                         document.getElementById('game').style.display = 'none';
